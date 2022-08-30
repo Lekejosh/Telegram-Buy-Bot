@@ -1,11 +1,13 @@
-const { Telegraf } = require("telegraf");
+const { Telegraf, ctx } = require("telegraf");
 const bot = new Telegraf("5605755705:AAFcqIVnFlN3r9LAxbWumf7_w05g7Cdapj8");
 const axios = require("axios");
+const text = require("./text.json");
 
 bot.use(function (ctx, next) {
   /// or other chat types...
   // if( ctx.chat.type !== 'channel' ) return next();
   if (ctx.chat.id > 0) return next();
+  console.log(ctx.chat.title);
 
   /// need to cache this result ( variable or session or ....)
   /// because u don't need to call this method
@@ -23,17 +25,16 @@ bot.use(function (ctx, next) {
     .catch(console.log)
     .then((_) => next(ctx));
 });
-bot.command("start", function (ctx) {
+
+bot.start((ctx) => {
   if (ctx.from._is_in_admin_list) {
-    let startMessage =
-      "Hello!\n 1) Please click the link below(Admins only). \n 2) Click the 'Start' Button at the bottom of the screen. \n 3) if you want to add a token to the group, choose 'Add Token', or; \n 4) if you want to changethe settings for an already added token, choose 'Change Token Settings'. \n \n <i>You will need to click this link everytime you want to enter the menus</i>";
-    bot.telegram.sendMessage(ctx.chat.id, startMessage, {
+    bot.telegram.sendMessage(ctx.chat.id, text.welcome, {
       reply_markup: {
         inline_keyboard: [
           [
             {
               text: "Click me",
-              url: `t.me/leke_tut_buyBot?start=${ctx.from.id}`,
+              url: `t.me/leke_tut_buyBot?start=${ctx.chat.id}`,
             },
           ],
         ],
@@ -45,6 +46,25 @@ bot.command("start", function (ctx) {
     });
   }
 });
+
+// function (ctx,next) {
+
+//   let id = ctx.from.id;
+//   bot.command(`start=${id}`, (ctx) => {
+//     if (id === ctx.from.id) {
+//       return ctx.reply("welcome");
+//     } else {
+//       return ctx.reply("denied");
+//     }
+//   });
+
+// }
+
+// bot.command(`/start/${ctx.chat.id}`, async (ctx) => {
+//   try {
+//     await ctx.reply();
+//   } catch (error) {}
+// });
 
 bot.action("setting", function (ctx) {
   if (ctx.from._is_in_admin_list) {
@@ -67,21 +87,26 @@ bot.action("setting", function (ctx) {
   }
 });
 
-bot.action("redirect", (ctx) => {
-  let startMessage = "Welcome what will you like to do today?";
-  bot.telegram.sendMessage(ctx.chat.id, startMessage, {
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: "Click me",
-            url: "https://t.me/leke_tut_buyBot",
-          },
-        ],
-        [{ text: "Setting(Admin Only)", callback_data: "setting" }],
-      ],
-    },
-  });
-});
+// bot.action(redirect, (ctx) => {
+//   let startMessage = "Welcome what will you like to do today?";
+//   if (id === ctx.from.id) {
+//     return ctx.reply("welcome");
+//   } else {
+//     return ctx.reply("denied");
+//   }
+// bot.telegram.sendMessage(ctx.chat.id, startMessage, {
+//   reply_markup: {
+//     inline_keyboard: [
+//       [
+//         {
+//           text: "Click me",
+//           url: "https://t.me/leke_tut_buyBot",
+//         },
+//       ],
+//       [{ text: "Setting(Admin Only)", callback_data: "setting" }],
+//     ],
+//   },
+// });
+// });
 
 bot.launch();
