@@ -27,27 +27,33 @@ bot.use(function (ctx, next) {
     .catch(console.log)
     .then((_) => next(ctx));
 });
-bot.command("start", (ctx) => {
-  let startMessage =
-    "Hello!\n 1) Please click the link below(Admins only). \n 2) Click the 'Start' Button at the bottom of the screen. \n 3) if you want to add a token to the group, choose 'Add Token', or; \n 4) if you want to changethe settings for an already added token, choose 'Change Token Settings'. \n \n You will need to click this link everytime you want to enter the menus~";
-  bot.telegram.sendMessage(ctx.chat.id, startMessage, {
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: "Click me",
-            url: "t.me/redirect_buyBot",
-          },
+bot.command("start", function (ctx) {
+  if (ctx.from._is_in_admin_list) {
+    let startMessage =
+      "Hello!\n 1) Please click the link below(Admins only). \n 2) Click the 'Start' Button at the bottom of the screen. \n 3) if you want to add a token to the group, choose 'Add Token', or; \n 4) if you want to changethe settings for an already added token, choose 'Change Token Settings'. \n \n You will need to click this link everytime you want to enter the menus~";
+    bot.telegram.sendMessage(ctx.chat.id, startMessage, {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "Click me",
+              url: "t.me/redirect_buyBot",
+            },
+          ],
+          [{ text: "Setting(Admin Only)", callback_data: "setting" }],
         ],
-        [{ text: "Setting(Admin Only)", callback_data: "setting" }],
-      ],
-    },
-  });
+      },
+    });
+  } else {
+    return ctx.reply("Only Admin can access this", {
+      reply_to_message_id: ctx.message.message_id,
+    });
+  }
 });
 
 bot.action("setting", function (ctx) {
   if (ctx.from._is_in_admin_list) {
-    let startMessage = getName(ctx.message.user.username);
+    let startMessage = `What are you will to set today?`;
     bot.telegram.sendMessage(ctx.chat.id, startMessage, {
       reply_markup: {
         inline_keyboard: [
@@ -62,6 +68,7 @@ bot.action("setting", function (ctx) {
       },
     });
   } else {
+    return ctx.reply("Only Admin can access this");
   }
 });
 bot.action("start", (ctx) => {
