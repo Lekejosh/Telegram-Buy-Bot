@@ -1,5 +1,5 @@
 const { Telegraf, ctx } = require("telegraf");
-const bot = new Telegraf("5605755705:AAFcqIVnFlN3r9LAxbWumf7_w05g7Cdapj8");
+const bot = new Telegraf("5561811963:AAFV83oL535KmiZOHwkSIybgiwmoCAxUCxQ");
 const axios = require("axios");
 const text = require("./text.json");
 
@@ -34,7 +34,7 @@ bot.start((ctx) => {
           [
             {
               text: "Click me",
-              url: `t.me/leke_tut_buyBot?start=${ctx.chat.id}`,
+              callback_data: "setting",
             },
           ],
         ],

@@ -2,27 +2,14 @@ const { Telegraf } = require("telegraf");
 const mongoose = require("mongoose");
 const { session } = require("telegraf-session-mongoose");
 const text = require("./text.json");
+const User = require("./database");
 
-const bot = new Telegraf("5605755705:AAFcqIVnFlN3r9LAxbWumf7_w05g7Cdapj8");
-
-const model = new mongoose.Schema({
-  name: String,
-  userName: String,
-  userId: Number,
-  chatId: Number,
-  firstName: String,
-  status: String,
-});
+const bot = new Telegraf("5561811963:AAFV83oL535KmiZOHwkSIybgiwmoCAxUCxQ");
 
 bot.use(function (ctx, next) {
-  /// or other chat types...
-  // if( ctx.chat.type !== 'channel' ) return next();
   if (ctx.chat.id > 0) return next();
   console.log(ctx.chat.title);
 
-  /// need to cache this result ( variable or session or ....)
-  /// because u don't need to call this method
-  /// every message
   return bot.telegram
     .getChatAdministrators(ctx.chat.id)
     .then(function (data) {
@@ -37,22 +24,21 @@ bot.use(function (ctx, next) {
     .then((_) => next(ctx));
 });
 
-bot.start((ctx) => {
-  //   new model({
-  //     name: ctx.from.first_name,
-  //     userId: ctx.from.id,
-  //     userName: ctx.from.username,
-  //     chatId: ctx.chat.id,
-  //     status: ctx.status,
-  //   }).save();
-  if (ctx.from.id && ctx.from._is_in_admin_list) {
+bot.command("addtoken", (ctx) => {
+  let user = User.create({
+    firstName: ctx.from.first_name,
+    userId: ctx.from.id,
+    chatId: ctx.chat.id,
+  });
+  // "Some User token"
+  if (ctx.from._is_in_admin_list) {
     bot.telegram.sendMessage(ctx.chat.id, text.welcome, {
       reply_markup: {
         inline_keyboard: [
           [
             {
               text: "Proceed",
-              callback_data: "add",
+              callback_data: "plus",
             },
           ],
         ],
@@ -64,7 +50,8 @@ bot.start((ctx) => {
     });
   }
 });
-bot.action("setting", (ctx) => {
+
+bot.action("setting", function (ctx) {
   if (ctx.from._is_in_admin_list) {
     ctx.deleteMessage();
     bot.telegram.sendMessage(ctx.chat.id, text.setting, {
@@ -85,7 +72,7 @@ bot.action("setting", (ctx) => {
   }
 });
 
-bot.action("add", (ctx) => {
+bot.action("plus", function (ctx) {
   if (ctx.from._is_in_admin_list) {
     ctx.deleteMessage();
     bot.telegram.sendMessage(ctx.chat.id, text.setting, {
@@ -93,11 +80,11 @@ bot.action("add", (ctx) => {
         inline_keyboard: [
           [
             {
-              text: "Add New Token",
-              callback_data: "set",
+              text: "Add Token",
+              callback_data: "add",
             },
           ],
-          [{ text: "Change token setting", callback_data: "setting" }],
+          [{ text: "Token Setting", callback_data: "setting" }],
         ],
       },
     });
@@ -106,7 +93,7 @@ bot.action("add", (ctx) => {
   }
 });
 
-bot.action("set", (ctx) => {
+bot.action("add", function (ctx) {
   if (ctx.from._is_in_admin_list) {
     ctx.deleteMessage();
     bot.telegram.sendMessage(
@@ -120,18 +107,18 @@ bot.action("set", (ctx) => {
                 text: "ETH",
                 callback_data: "eth",
               },
+              { text: "BSC", callback_data: "bsc" },
             ],
-            [{ text: "BSC", callback_data: "bsc" }],
           ],
         },
       }
     );
   } else {
-    return;
+    return ctx.reply("Denied");
   }
 });
 
-bot.action("eth", (ctx) => {
+bot.action("eth", function (ctx) {
   if (ctx.from._is_in_admin_list) {
     ctx.deleteMessage();
     bot.telegram.sendMessage(ctx.chat.id, text.token, {
@@ -140,7 +127,114 @@ bot.action("eth", (ctx) => {
           [
             {
               text: "Uniswap",
-              callback_data: "uniswap",
+              callback_data: "e-uniswap",
+            },
+            {
+              text: "Pancakeswap",
+              callback_data: "e-pancakeswap",
+            },
+          ],
+          [
+            {
+              text: "Uniswap v3",
+              callback_data: "e-uniswapV3",
+            },
+            {
+              text: "biswap",
+              callback_data: "e-biswap",
+            },
+          ],
+          [
+            {
+              text: "Sushiswap",
+              callback_data: "e-sushiswap",
+            },
+            {
+              text: "pyeswap",
+              callback_data: "e-pyeswap",
+            },
+          ],
+          [
+            {
+              text: "shibaswap",
+              callback_data: "e-shibaswap",
+            },
+            {
+              text: "busta",
+              callback_data: "e-busta",
+            },
+          ],
+          [
+            {
+              text: ">>cancel",
+              callback_data: "cancel",
+            },
+            {
+              text: ">>cancel",
+              callback_data: "cancel",
+            },
+          ],
+        ],
+      },
+    });
+  } else {
+    return;
+  }
+});
+bot.action("bsc", function (ctx) {
+  if (ctx.from._is_in_admin_list) {
+    ctx.deleteMessage();
+    bot.telegram.sendMessage(ctx.chat.id, text.token, {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "Uniswap",
+              callback_data: "b-uniswap",
+            },
+            {
+              text: "Pancakeswap",
+              callback_data: "b-pancakeswap",
+            },
+          ],
+          [
+            {
+              text: "Uniswap v3",
+              callback_data: "b-uniswapV3",
+            },
+            {
+              text: "biswap",
+              callback_data: "b-biswap",
+            },
+          ],
+          [
+            {
+              text: "Sushiswap",
+              callback_data: "b-sushiswap",
+            },
+            {
+              text: "pyeswap",
+              callback_data: "b-pyeswap",
+            },
+          ],
+          [
+            {
+              text: "shibaswap",
+              callback_data: "b-shibaswap",
+            },
+            {
+              text: "busta",
+              callback_data: "b-busta",
+            },
+          ],
+          [
+            {
+              text: ">>cancel",
+              callback_data: "cancel",
+            },
+            {
+              text: ">>cancel",
+              callback_data: "cancel",
             },
           ],
         ],
@@ -161,13 +255,14 @@ bot.action("eth", (ctx) => {
 // redirect();
 
 const init = async () => {
-  mongoose.connect("mongodb://localhost:27017/telegram", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    dbName: "telegram",
-  });
-
-  bot.use(session({ collectionName: "sessions" }));
+  mongoose
+    .connect("mongodb://localhost:27017/telegram")
+    .then((data) => {
+      console.log(`Mongodb connected with serve: ${data.connection.host}`);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   bot.launch();
 };
 
