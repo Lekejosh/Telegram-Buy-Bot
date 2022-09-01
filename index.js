@@ -2,7 +2,7 @@ const { Telegraf } = require("telegraf");
 const mongoose = require("mongoose");
 const { session } = require("telegraf-session-mongoose");
 const text = require("./text.json");
-const User = require("./database");
+const User = require("./userModel");
 
 const bot = new Telegraf("5561811963:AAFV83oL535KmiZOHwkSIybgiwmoCAxUCxQ");
 
@@ -24,12 +24,21 @@ bot.use(function (ctx, next) {
     .then((_) => next(ctx));
 });
 
-bot.command("addtoken", (ctx) => {
-  let user = User.create({
-    firstName: ctx.from.first_name,
-    userId: ctx.from.id,
-    chatId: ctx.chat.id,
+bot.command("addtoken", (ctx, next) => {
+  User.findOne({ chatId: ctx.chat.id, userId: ctx.from.id }).then((user) => {
+    if (user) {
+      next();
+    } else {
+      const newUser = User.create({
+        firstName: ctx.from.first_name,
+        userId: ctx.from.id,
+        chatId: ctx.chat.id,
+      }).then((neww) => {
+        console.log(neww);
+      });
+    }
   });
+
   // "Some User token"
   if (ctx.from._is_in_admin_list) {
     bot.telegram.sendMessage(ctx.chat.id, text.welcome, {
@@ -127,41 +136,41 @@ bot.action("eth", function (ctx) {
           [
             {
               text: "Uniswap",
-              callback_data: "e-uniswap",
+              callback_data: "eUniswap",
             },
             {
               text: "Pancakeswap",
-              callback_data: "e-pancakeswap",
+              callback_data: "ePancakeswap",
             },
           ],
           [
             {
               text: "Uniswap v3",
-              callback_data: "e-uniswapV3",
+              callback_data: "eUniswapV3",
             },
             {
               text: "biswap",
-              callback_data: "e-biswap",
+              callback_data: "eBiswap",
             },
           ],
           [
             {
               text: "Sushiswap",
-              callback_data: "e-sushiswap",
+              callback_data: "eSushiswap",
             },
             {
               text: "pyeswap",
-              callback_data: "e-pyeswap",
+              callback_data: "ePyeswap",
             },
           ],
           [
             {
               text: "shibaswap",
-              callback_data: "e-shibaswap",
+              callback_data: "eShibaswap",
             },
             {
               text: "busta",
-              callback_data: "e-busta",
+              callback_data: "eBusta",
             },
           ],
           [
@@ -190,41 +199,41 @@ bot.action("bsc", function (ctx) {
           [
             {
               text: "Uniswap",
-              callback_data: "b-uniswap",
+              callback_data: "bUniswap",
             },
             {
               text: "Pancakeswap",
-              callback_data: "b-pancakeswap",
+              callback_data: "bPancakeswap",
             },
           ],
           [
             {
               text: "Uniswap v3",
-              callback_data: "b-uniswapV3",
+              callback_data: "bUniswapV3",
             },
             {
               text: "biswap",
-              callback_data: "b-biswap",
+              callback_data: "bBiswap",
             },
           ],
           [
             {
               text: "Sushiswap",
-              callback_data: "b-sushiswap",
+              callback_data: "bSushiswap",
             },
             {
               text: "pyeswap",
-              callback_data: "b-pyeswap",
+              callback_data: "bPyeswap",
             },
           ],
           [
             {
               text: "shibaswap",
-              callback_data: "b-shibaswap",
+              callback_data: "bShibaswap",
             },
             {
               text: "busta",
-              callback_data: "b-busta",
+              callback_data: "bBusta",
             },
           ],
           [
