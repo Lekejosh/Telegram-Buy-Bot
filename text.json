@@ -3,5 +3,7 @@
   "start": "What do you want to do today",
   "setting": "What will you like to change today?",
   "set": "Hello! \n Please choose below what you are wanting to do for",
-  "token": "Great! \n What DEX is your token on?"
+  "token": "Great! \n What DEX is your token on?",
+  "selection": "You chose",
+  "selectionContd": ".\nPlease paste the TOKEN address of the token you would like BuildGr33n Buy Bot to track."
 }

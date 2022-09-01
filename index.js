@@ -190,6 +190,7 @@ bot.action("eth", function (ctx) {
     return;
   }
 });
+
 bot.action("bsc", function (ctx) {
   if (ctx.from._is_in_admin_list) {
     ctx.deleteMessage();
@@ -253,15 +254,33 @@ bot.action("bsc", function (ctx) {
     return;
   }
 });
+let ethList = [
+  "eUniswap",
+  "ePancakeswap",
+  "eUniswapV3",
+  "eBiswap",
+  "eSushiswap",
+  "eBusta",
+];
+let bscList = [
+  "bUniswap",
+  "bPancakeswap",
+  "bUniswapV3",
+  "bBiswap",
+  "bSushiswap",
+  "bBusta",
+];
 
-// const redirect = (ctx) => {
-//   if (ctx.chat.id && ctx.from._is_in_admin_list) {
-//     bot.command(`start=${ctx.chat.id}`);
-//     return ctx.reply(text.start);
-//   } else {
-//   }
-// };
-// redirect();
+bot.action(ethList, function (ctx, next) {
+  if (ctx.from._is_in_admin_list) {
+    bot.telegram.sendMessage(
+      ctx.chat.id,
+      text.selection + " " + `${action.ethList}` + text.selectionContd,
+      ctx.inlineQuery
+    );
+  }
+  console.log(ctx.inlineQuery);
+});
 
 const init = async () => {
   mongoose
