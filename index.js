@@ -2,10 +2,14 @@ const Telegraf = require("telegraf");
 const mongoose = require("mongoose");
 const { session } = require("telegraf-session-mongoose");
 const text = require("./text.json");
+const verifyToken = require("./ethvalidate");
+const bverifyToken = require("./bscvalidate");
 const User = require("./userModel");
+const Stage = require("telegraf/stage");
+
+const WizardScene = require("telegraf/scenes/wizard");
 
 const bot = new Telegraf("5561811963:AAFV83oL535KmiZOHwkSIybgiwmoCAxUCxQ");
-const apiKey = "1ace1078ae6485ec62f38f4027ce66097af7b5e1";
 
 bot.use(function (ctx, next) {
   if (ctx.chat.id > 0) return next();
@@ -272,37 +276,62 @@ let bscList = [
   "bBusta",
 ];
 
-bot.action(ethList, function (ctx, next) {
-  let symbol = ctx.match[0];
-  console.log(symbol);
-  if (ctx.from._is_in_admin_list) {
-    bot.telegram.sendMessage(
-      ctx.chat.id,
-      text.selection +
-        " ETH " +
-        `${symbol.split("-")[1]}` +
-        text.selectionContd,
-      ctx.inlineQuery
-    );
-  } else {
+const tokenVerify = new WizardScene(
+  "token",
+  (ctx) => {
+    ctx.reply("Enter Your Token Address");
+    ctx.wizard.state.data = {};
+    return ctx.wizard.next();
+  },
+  (ctx) => {
+    ctx.wizard.state.data.address = ctx.message.text;
+    const tokenAddress = ctx.wizard.state.data.address;
+    verifyToken
+      .validateToken(tokenAddress)
+      .then((res) => {
+        const { isValid } = res.data;
+        if (isValid) {
+          ctx.reply("Address Successfully added to bot");
+        } else {
+          ctx.reply("Address is not Valid");
+        }
+      })
+      .catch((err) => ctx.reply(err.message));
+    return ctx.scene.leave();
   }
-  console.log(ctx.inlineQuery);
-});
+);
+const btokenVerify = new WizardScene(
+  "btoken",
+  (ctx) => {
+    ctx.reply("Enter Your Token Address");
+    ctx.wizard.state.data = {};
+    return ctx.wizard.next();
+  },
+  (ctx) => {
+    ctx.wizard.state.data.address = ctx.message.text;
+    const tokenAddress = ctx.wizard.state.data.address;
+    bverifyToken
+      .bvalidation(tokenAddress)
+      .then((res) => {
+        const { isValid } = res.data;
+        if (isValid) {
+          ctx.reply("Address Successfully added to bot");
+        } else {
+          ctx.reply("Address is not Valid");
+        }
+      })
+      .catch((err) => ctx.reply(err.message));
+    return ctx.scene.leave();
+  }
+);
+const stage = new Stage([tokenVerify, btokenVerify]);
+bot.use(session());
+bot.use(stage.middleware());
 
-bot.action(bscList, function (ctx, next) {
-  let symbol = ctx.match[0];
-  console.log(symbol);
-  if (ctx.from._is_in_admin_list) {
-    bot.telegram.sendMessage(
-      ctx.chat.id,
-      text.selection +
-        " BSC " +
-        `${symbol.split("-")[1]}` +
-        text.selectionContd,
-      ctx.inlineQuery
-    );
-  } else {
-  }
+bot.action(ethList, Stage.enter("token"));
+
+bot.action(bscList, (ctx) => {
+  Stage.enter("btoken")(ctx);
 });
 
 const init = async () => {
