@@ -1,10 +1,11 @@
-const { Telegraf } = require("telegraf");
+const Telegraf = require("telegraf");
 const mongoose = require("mongoose");
 const { session } = require("telegraf-session-mongoose");
 const text = require("./text.json");
 const User = require("./userModel");
 
 const bot = new Telegraf("5561811963:AAFV83oL535KmiZOHwkSIybgiwmoCAxUCxQ");
+const apiKey = "1ace1078ae6485ec62f38f4027ce66097af7b5e1";
 
 bot.use(function (ctx, next) {
   if (ctx.chat.id > 0) return next();
@@ -136,41 +137,41 @@ bot.action("eth", function (ctx) {
           [
             {
               text: "Uniswap",
-              callback_data: "eUniswap",
+              callback_data: "e-Uniswap",
             },
             {
               text: "Pancakeswap",
-              callback_data: "ePancakeswap",
+              callback_data: "e-Pancakeswap",
             },
           ],
           [
             {
               text: "Uniswap v3",
-              callback_data: "eUniswapV3",
+              callback_data: "e-UniswapV3",
             },
             {
               text: "biswap",
-              callback_data: "eBiswap",
+              callback_data: "e-Biswap",
             },
           ],
           [
             {
               text: "Sushiswap",
-              callback_data: "eSushiswap",
+              callback_data: "e-Sushiswap",
             },
             {
               text: "pyeswap",
-              callback_data: "ePyeswap",
+              callback_data: "e-Pyeswap",
             },
           ],
           [
             {
               text: "shibaswap",
-              callback_data: "eShibaswap",
+              callback_data: "e-Shibaswap",
             },
             {
               text: "busta",
-              callback_data: "eBusta",
+              callback_data: "e-Busta",
             },
           ],
           [
@@ -255,12 +256,12 @@ bot.action("bsc", function (ctx) {
   }
 });
 let ethList = [
-  "eUniswap",
-  "ePancakeswap",
-  "eUniswapV3",
-  "eBiswap",
-  "eSushiswap",
-  "eBusta",
+  "e-Uniswap",
+  "e-Pancakeswap",
+  "e-UniswapV3",
+  "e-Biswap",
+  "e-Sushiswap",
+  "e-Busta",
 ];
 let bscList = [
   "bUniswap",
@@ -272,14 +273,36 @@ let bscList = [
 ];
 
 bot.action(ethList, function (ctx, next) {
+  let symbol = ctx.match[0];
+  console.log(symbol);
   if (ctx.from._is_in_admin_list) {
     bot.telegram.sendMessage(
       ctx.chat.id,
-      text.selection + " " + `${action.ethList}` + text.selectionContd,
+      text.selection +
+        " ETH " +
+        `${symbol.split("-")[1]}` +
+        text.selectionContd,
       ctx.inlineQuery
     );
+  } else {
   }
   console.log(ctx.inlineQuery);
+});
+
+bot.action(bscList, function (ctx, next) {
+  let symbol = ctx.match[0];
+  console.log(symbol);
+  if (ctx.from._is_in_admin_list) {
+    bot.telegram.sendMessage(
+      ctx.chat.id,
+      text.selection +
+        " BSC " +
+        `${symbol.split("-")[1]}` +
+        text.selectionContd,
+      ctx.inlineQuery
+    );
+  } else {
+  }
 });
 
 const init = async () => {
