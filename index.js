@@ -30,19 +30,23 @@ bot.use(function (ctx, next) {
 });
 
 bot.command("addtoken", (ctx, next) => {
-  User.findOne({ chatId: ctx.chat.id, userId: ctx.from.id }).then((user) => {
-    if (user) {
-      next();
-    } else {
-      const newUser = User.create({
-        firstName: ctx.from.first_name,
-        userId: ctx.from.id,
-        chatId: ctx.chat.id,
-      }).then((neww) => {
-        console.log(neww);
-      });
-    }
-  });
+  if (ctx.from._is_in_admin_list) {
+    User.findOne({ chatId: ctx.chat.id, userId: ctx.from.id }).then((user) => {
+      if (user) {
+        next();
+      } else {
+        const newUser = User.create({
+          firstName: ctx.from.first_name,
+          userId: ctx.from.id,
+          chatId: ctx.chat.id,
+        }).then((neww) => {
+          console.log(neww);
+        });
+      }
+    });
+  } else {
+    return next();
+  }
 
   // "Some User token"
   if (ctx.from._is_in_admin_list) {
@@ -278,22 +282,55 @@ let bscList = [
 
 const tokenVerify = new WizardScene(
   "token",
-  (ctx) => {
+  (ctx, next) => {
     ctx.reply("Enter Your Token Address");
     ctx.wizard.state.data = {};
     return ctx.wizard.next();
   },
-  (ctx) => {
+  (ctx, next) => {
     ctx.wizard.state.data.address = ctx.message.text;
     const tokenAddress = ctx.wizard.state.data.address;
     verifyToken
       .validateToken(tokenAddress)
       .then((res) => {
-        const { isValid } = res.data;
-        if (isValid) {
-          ctx.reply("Address Successfully added to bot");
+        console.log(res.data);
+        const { status, result } = res.data;
+
+        if (result[0].ContractName == "" || status == 0) {
+          ctx.reply("Address is not valid");
         } else {
-          ctx.reply("Address is not Valid");
+          User.findOne({ ethAddress: ctx.wizard.state.data.address }).then(
+            (user) => {
+              if (user) {
+                ctx.reply("Address already exists");
+                next();
+              } else {
+                var chatId = ctx.chat.id;
+                const newUser = User.findOneAndUpdate(chatId, {
+                  ethAddress: ctx.wizard.state.data.address,
+                }).then((neww) => {
+                  console.log(neww);
+                });
+                // ctx.reply(`${result[0].ContractName}....`);
+                bot.telegram.sendMessage(
+                  ctx.chat.id,
+                  `Contract Name found ${ctx.chat.title}`,
+                  {
+                    reply_markup: {
+                      inline_keyboard: [
+                        [
+                          {
+                            text: `${result[0].ContractName}`,
+                            callback_data: "save",
+                          },
+                        ],
+                      ],
+                    },
+                  }
+                );
+              }
+            }
+          );
         }
       })
       .catch((err) => ctx.reply(err.message));
@@ -313,11 +350,44 @@ const btokenVerify = new WizardScene(
     bverifyToken
       .bvalidation(tokenAddress)
       .then((res) => {
-        const { isValid } = res.data;
-        if (isValid) {
-          ctx.reply("Address Successfully added to bot");
+        console.log(res.data);
+        const { status, result } = res.data;
+
+        if (result[0].ContractName == "" || status == 0) {
+          ctx.reply("Address is not valid");
         } else {
-          ctx.reply("Address is not Valid");
+          User.findOne({ bscAddress: ctx.wizard.state.data.address }).then(
+            (user) => {
+              if (user) {
+                ctx.reply("Address already exists");
+                next();
+              } else {
+                var chatId = ctx.chat.id;
+                const newUser = User.findOneAndUpdate(chatId, {
+                  bscAddress: ctx.wizard.state.data.address,
+                }).then((neww) => {
+                  console.log(neww);
+                });
+                // ctx.reply(`${result[0].ContractName}....`);
+                bot.telegram.sendMessage(
+                  ctx.chat.id,
+                  `Contract Name found ${ctx.chat.title}`,
+                  {
+                    reply_markup: {
+                      inline_keyboard: [
+                        [
+                          {
+                            text: `${result[0].ContractName}`,
+                            callback_data: "save",
+                          },
+                        ],
+                      ],
+                    },
+                  }
+                );
+              }
+            }
+          );
         }
       })
       .catch((err) => ctx.reply(err.message));
@@ -332,6 +402,15 @@ bot.action(ethList, Stage.enter("token"));
 
 bot.action(bscList, (ctx) => {
   Stage.enter("btoken")(ctx);
+});
+
+bot.action("cancel", (ctx) => {
+  ctx.deleteMessage();
+  ctx.reply("bye");
+});
+
+bot.action("save", (ctx) => {
+  ctx.reply("Token Added to Buildgr33bot");
 });
 
 const init = async () => {
