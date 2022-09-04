@@ -31,13 +31,13 @@ bot.use(function (ctx, next) {
 
 bot.command("addtoken", (ctx, next) => {
   if (ctx.from._is_in_admin_list) {
-    User.findOne({ chatId: ctx.chat.id, userId: ctx.from.id }).then((user) => {
+    User.findOne({ chatId: ctx.chat.id }).then((user) => {
       if (user) {
         next();
       } else {
         const newUser = User.create({
-          firstName: ctx.from.first_name,
-          userId: ctx.from.id,
+          // firstName: ctx.from.first_name,
+          // userId: ctx.from.id,
           chatId: ctx.chat.id,
         }).then((neww) => {
           console.log(neww);
@@ -77,11 +77,11 @@ bot.action("setting", function (ctx) {
         inline_keyboard: [
           [
             {
-              text: "Reset Token",
-              url: "https://t.me/leke_tut_buyBot",
+              text: "Token Setting",
+              url: "Tsetting",
             },
           ],
-          [{ text: "Back", callback_data: "start" }],
+          [{ text: ">>Cancel", callback_data: "cancel" }],
         ],
       },
     });
@@ -102,7 +102,7 @@ bot.action("plus", function (ctx) {
               callback_data: "add",
             },
           ],
-          [{ text: "Token Setting", callback_data: "setting" }],
+          [{ text: "Token Setting", callback_data: "Tsetting" }],
         ],
       },
     });
@@ -299,38 +299,46 @@ const tokenVerify = new WizardScene(
         if (result[0].ContractName == "" || status == 0) {
           ctx.reply("Address is not valid");
         } else {
-          User.findOne({ ethAddress: ctx.wizard.state.data.address }).then(
-            (user) => {
-              if (user) {
-                ctx.reply("Address already exists");
-                next();
-              } else {
-                var chatId = ctx.chat.id;
-                const newUser = User.findOneAndUpdate(chatId, {
-                  ethAddress: ctx.wizard.state.data.address,
-                }).then((neww) => {
-                  console.log(neww);
-                });
-                // ctx.reply(`${result[0].ContractName}....`);
-                bot.telegram.sendMessage(
-                  ctx.chat.id,
-                  `Contract Name found ${ctx.chat.title}`,
-                  {
-                    reply_markup: {
-                      inline_keyboard: [
-                        [
-                          {
-                            text: `${result[0].ContractName}`,
-                            callback_data: "save",
-                          },
-                        ],
+          var chatId = ctx.chat.id;
+          User.findOne({
+            ethAddress: {
+              name: result[0].ContractName,
+              token_Address: tokenAddress,
+            },
+          }).then((user) => {
+            if (user) {
+              ctx.reply("Address already exists");
+              next();
+            } else {
+              var chatId = ctx.chat.id;
+              const newUser = User.findOneAndUpdate(chatId, {
+                $push: {
+                  ethAddress: {
+                    name: result[0].ContractName,
+                    token_Address: tokenAddress,
+                  },
+                },
+              }).then((neww) => {
+                console.log(neww);
+              });
+              bot.telegram.sendMessage(
+                ctx.chat.id,
+                `Contract Name found ${ctx.chat.title}`,
+                {
+                  reply_markup: {
+                    inline_keyboard: [
+                      [
+                        {
+                          text: `${result[0].ContractName}`,
+                          callback_data: "save",
+                        },
                       ],
-                    },
-                  }
-                );
-              }
+                    ],
+                  },
+                }
+              );
             }
-          );
+          });
         }
       })
       .catch((err) => ctx.reply(err.message));
@@ -350,44 +358,51 @@ const btokenVerify = new WizardScene(
     bverifyToken
       .bvalidation(tokenAddress)
       .then((res) => {
-        console.log(res.data);
         const { status, result } = res.data;
 
         if (result[0].ContractName == "" || status == 0) {
           ctx.reply("Address is not valid");
         } else {
-          User.findOne({ bscAddress: ctx.wizard.state.data.address }).then(
-            (user) => {
-              if (user) {
-                ctx.reply("Address already exists");
-                next();
-              } else {
-                var chatId = ctx.chat.id;
-                const newUser = User.findOneAndUpdate(chatId, {
-                  bscAddress: ctx.wizard.state.data.address,
-                }).then((neww) => {
-                  console.log(neww);
-                });
-                // ctx.reply(`${result[0].ContractName}....`);
-                bot.telegram.sendMessage(
-                  ctx.chat.id,
-                  `Contract Name found ${ctx.chat.title}`,
-                  {
-                    reply_markup: {
-                      inline_keyboard: [
-                        [
-                          {
-                            text: `${result[0].ContractName}`,
-                            callback_data: "save",
-                          },
-                        ],
+          var chatId = ctx.chat.id;
+          User.findOne({
+            bscAddress: {
+              name: result[0].ContractName,
+              token_Address: tokenAddress,
+            },
+          }).then((user) => {
+            if (user) {
+              ctx.reply("Address already exists");
+            } else {
+              var chatId = ctx.chat.id;
+              const newUser = User.findOneAndUpdate(chatId, {
+                $push: {
+                  bscAddress: {
+                    name: result[0].ContractName,
+                    token_Address: tokenAddress,
+                  },
+                },
+              }).then((neww) => {
+                console.log(neww);
+              });
+              // ctx.reply(`${result[0].ContractName}....`);
+              bot.telegram.sendMessage(
+                ctx.chat.id,
+                `Contract Name found ${ctx.chat.title}`,
+                {
+                  reply_markup: {
+                    inline_keyboard: [
+                      [
+                        {
+                          text: `${result[0].ContractName}`,
+                          callback_data: "save",
+                        },
                       ],
-                    },
-                  }
-                );
-              }
+                    ],
+                  },
+                }
+              );
             }
-          );
+          });
         }
       })
       .catch((err) => ctx.reply(err.message));
@@ -415,7 +430,7 @@ bot.action("save", (ctx) => {
 
 const init = async () => {
   mongoose
-    .connect("mongodb://localhost:27017/telegram")
+    .connect("mongodb://localhost:27017/buybot")
     .then((data) => {
       console.log(`Mongodb connected with serve: ${data.connection.host}`);
     })

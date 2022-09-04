@@ -39,7 +39,7 @@ module.exports = {
   validateToken: (tokenAddress) =>
     axios({
       method: "GET",
-      url: `https://api.etherscan.com/api?module=contract&action=getsourcecode&address=${tokenAddress}&tag=latest&apikey=1FDN92AQHNQ7FMUWJ6SGJJYYF1UW3TBMNH`,
+      url: `https://api.etherscan.io/api?module=contract&action=getsourcecode&address=${tokenAddress}&apikey=112R9MIZ97GI3M7UBVNAR34HYIGEW4RK8W`,
       // headers: {
       //   "content-type": "application/octet-stream",
       //   "X-RapidAPI-Key": "24736236demshefa578f021de88ep126b89jsn2e4a4fb05a68",
