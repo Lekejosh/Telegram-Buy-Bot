@@ -69,7 +69,7 @@ bot.command("addtoken", (ctx, next) => {
   }
 });
 
-bot.action("setting", function (ctx) {
+bot.action("setting", function (ctx, req, res, next) {
   if (ctx.from._is_in_admin_list) {
     ctx.deleteMessage();
     bot.telegram.sendMessage(ctx.chat.id, text.setting, {
@@ -78,7 +78,7 @@ bot.action("setting", function (ctx) {
           [
             {
               text: "Token Setting",
-              url: "Tsetting",
+              callback_data: "setting",
             },
           ],
           [{ text: ">>Cancel", callback_data: "cancel" }],
@@ -102,7 +102,7 @@ bot.action("plus", function (ctx) {
               callback_data: "add",
             },
           ],
-          [{ text: "Token Setting", callback_data: "Tsetting" }],
+          [{ text: "Token Setting", callback_data: "setting" }],
         ],
       },
     });
@@ -293,7 +293,6 @@ const tokenVerify = new WizardScene(
     verifyToken
       .validateToken(tokenAddress)
       .then((res) => {
-        console.log(res.data);
         const { status, result } = res.data;
 
         if (result[0].ContractName == "" || status == 0) {
@@ -301,24 +300,24 @@ const tokenVerify = new WizardScene(
         } else {
           var chatId = ctx.chat.id;
           User.findOne({
-            ethAddress: {
-              name: result[0].ContractName,
-              token_Address: tokenAddress,
-            },
+            "ethAddress.name": result[0].ContractName,
           }).then((user) => {
             if (user) {
               ctx.reply("Address already exists");
               next();
             } else {
               var chatId = ctx.chat.id;
-              const newUser = User.findOneAndUpdate(chatId, {
-                $push: {
-                  ethAddress: {
-                    name: result[0].ContractName,
-                    token_Address: tokenAddress,
+              const newUser = User.findOneAndUpdate(
+                { chatId },
+                {
+                  $push: {
+                    ethAddress: {
+                      name: result[0].ContractName,
+                      token_Address: tokenAddress,
+                    },
                   },
-                },
-              }).then((neww) => {
+                }
+              ).then((neww) => {
                 console.log(neww);
               });
               bot.telegram.sendMessage(
@@ -365,23 +364,23 @@ const btokenVerify = new WizardScene(
         } else {
           var chatId = ctx.chat.id;
           User.findOne({
-            bscAddress: {
-              name: result[0].ContractName,
-              token_Address: tokenAddress,
-            },
+            "bscAddress.name": result[0].ContractName,
           }).then((user) => {
             if (user) {
               ctx.reply("Address already exists");
             } else {
               var chatId = ctx.chat.id;
-              const newUser = User.findOneAndUpdate(chatId, {
-                $push: {
-                  bscAddress: {
-                    name: result[0].ContractName,
-                    token_Address: tokenAddress,
+              const newUser = User.findOneAndUpdate(
+                { chatId },
+                {
+                  $push: {
+                    bscAddress: {
+                      name: result[0].ContractName,
+                      token_Address: tokenAddress,
+                    },
                   },
-                },
-              }).then((neww) => {
+                }
+              ).then((neww) => {
                 console.log(neww);
               });
               // ctx.reply(`${result[0].ContractName}....`);
