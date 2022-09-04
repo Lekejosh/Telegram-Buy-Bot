@@ -8,8 +8,8 @@ class transaction {
     this.transaction = {};
     this.transaction.unit = "";
   }
-  async getTransaction(callback) {
-    const res = await axios.get(services.balance);
+  async getbscTransaction(callback) {
+    const res = await axios.get(services.bSmart);
     const { timeStamp, gasPrice, blockNumber, from, to, value } =
       res.data.result[0];
     console.log(timeStamp);

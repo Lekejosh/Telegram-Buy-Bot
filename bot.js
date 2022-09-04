@@ -1,9 +1,10 @@
 const transaction = require("./blockchain transaction/crypt");
+const bsctransaction = require("./blockchain transaction/bsccrypt");
 class Bot {
   constructor(bot) {
     this.bot = bot;
-    this.transaction = new transaction();
-    this.messagesDefault();
+    // this.transaction = new transaction();
+    this.bsctransaction = new bsctransaction();
   }
 
   // keyboardInitial() {
@@ -15,13 +16,22 @@ class Bot {
   // }
 
   sendMessages(message) {
-    this.bot.telegram.sendMessage(-799267120, message);
+    this.bot.telegram.sendMessage(-610768825, message);
   }
 
+  // async watchChanges() {
+  //   try {
+  //     await Promise.all([
+  //       this.transaction.getTransaction(this.sendMessages.bind(this)),
+  //     ]);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
   async watchChanges() {
     try {
       await Promise.all([
-        this.transaction.getTransaction(this.sendMessages.bind(this)),
+        this.bsctransaction.getbscTransaction(this.sendMessages.bind(this)),
       ]);
     } catch (error) {
       console.error(error);
@@ -48,46 +58,45 @@ class Bot {
   //   });
   // }
 
-  messagesDefault() {
-    this.bot.hears("BTC Bitstamp", (ctx) => {
-      ctx.reply(
-        `Valor da última transação na Bitstamp: ${this.transaction.transaction.lastValue}`,
-        this.keyboardInitial()
-      );
-    });
+  // messagesDefault() {
+  //   this.bot.hears("BTC Bitstamp", (ctx) => {
+  //     ctx.reply(
+  //       `Valor da última transação na Bitstamp: ${this.transaction.transaction.lastValue}`,
+  //       this.keyboardInitial()
+  //     );
+  //   });
 
-    // this.bot.hears("Brasil Exchanges", async (ctx) => {
-    //   ctx.reply(
-    //     "Selecione Alguma Exchange no teclado de opções!",
-    //     await this.keyboardBrazilExchanges()
-    //   );
-    // });
+  // this.bot.hears("Brasil Exchanges", async (ctx) => {
+  //   ctx.reply(
+  //     "Selecione Alguma Exchange no teclado de opções!",
+  //     await this.keyboardBrazilExchanges()
+  //   );
+  // });
 
-    // this.bot.hears("Valor Dolar", async (ctx) => {
-    //   ctx.reply(
-    //     `Valor do dolar: ${this.usd.lastValue}`,
-    //     this.keyboardInitial()
-    //   );
-    // });
+  // this.bot.hears("Valor Dolar", async (ctx) => {
+  //   ctx.reply(
+  //     `Valor do dolar: ${this.usd.lastValue}`,
+  //     this.keyboardInitial()
+  //   );
+  // });
 
-    // this.bot.hears(this.brazilExchanges, async (ctx) => {
-    //   try {
-    //     const res = await btcBrl.getBasicDataFromExchange(ctx.match);
+  // this.bot.hears(this.brazilExchanges, async (ctx) => {
+  //   try {
+  //     const res = await btcBrl.getBasicDataFromExchange(ctx.match);
 
-    //     ctx.replyWithHTML(
-    //       `Ultimos Valores na Exchange ${ctx.match}: \n\n Compra: ${res.buyPrice} \n Venda: ${res.sellPrice} \n Ultima Transação: <code>${res.last}</code>\n Volume: ${res.vol} \n <pre>Variação: ${res.lastVariation}% </pre>`
-    //     );
-    //   } catch (error) {
-    //     ctx.reply(
-    //       `A api da exchange ${ctx.match} está temporarimante indisponivel tente novamente mais tarde`
-    //     );
-    //   }
-    // });
+  //     ctx.replyWithHTML(
+  //       `Ultimos Valores na Exchange ${ctx.match}: \n\n Compra: ${res.buyPrice} \n Venda: ${res.sellPrice} \n Ultima Transação: <code>${res.last}</code>\n Volume: ${res.vol} \n <pre>Variação: ${res.lastVariation}% </pre>`
+  //     );
+  //   } catch (error) {
+  //     ctx.reply(
+  //       `A api da exchange ${ctx.match} está temporarimante indisponivel tente novamente mais tarde`
+  //     );
+  //   }
+  // });
 
-    // this.bot.hears("< Voltar", (ctx) => {
-    //   ctx.reply("Escolha Entre as opções do Teclado", this.keyboardInitial());
-    // });
-  }
+  // this.bot.hears("< Voltar", (ctx) => {
+  //   ctx.reply("Escolha Entre as opções do Teclado", this.keyboardInitial());
+  // });
 }
 
 module.exports = Bot;
