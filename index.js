@@ -4,17 +4,28 @@ const { session } = require("telegraf-session-mongoose");
 const text = require("./text.json");
 const verifyToken = require("./ethvalidate");
 const bverifyToken = require("./bscvalidate");
+// const transaction = require("./blockchain transaction/transaction hash");
 const User = require("./userModel");
 const Stage = require("telegraf/stage");
+const Robot = require("./bot");
+// const axios = require("axios");
 
 const WizardScene = require("telegraf/scenes/wizard");
 
 const bot = new Telegraf("5561811963:AAFV83oL535KmiZOHwkSIybgiwmoCAxUCxQ");
+const instance = new Robot(bot);
+
+setInterval(async () => {
+  try {
+    instance.watchChanges();
+  } catch (error) {
+    console.error(error);
+    return;
+  }
+}, 8000);
 
 bot.use(function (ctx, next) {
   if (ctx.chat.id > 0) return next();
-  console.log(ctx.chat.title);
-
   return bot.telegram
     .getChatAdministrators(ctx.chat.id)
     .then(function (data) {
@@ -36,8 +47,6 @@ bot.command("addtoken", (ctx, next) => {
         next();
       } else {
         const newUser = User.create({
-          // firstName: ctx.from.first_name,
-          // userId: ctx.from.id,
           chatId: ctx.chat.id,
         }).then((neww) => {
           console.log(neww);
