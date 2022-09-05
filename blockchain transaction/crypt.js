@@ -10,28 +10,33 @@ class transaction {
   }
   async getTransaction(callback) {
     const res = await axios.get(services.balance);
-    const { timeStamp, gasPrice, blockNumber, from, to, value } =
-      res.data.result[0];
-    console.log(timeStamp);
-    let main = res.data;
-    this.transaction.lastValue = timeStamp;
+    const con = await axios.get(services.contractN);
+    const val = await axios.get(services.value);
+    axios.all([res, con, val]).then(
+      axios.spread((...responses) => {
+        const { timeStamp, gasPrice, from } = responses[0].data.result[0];
+        const { ContractName } = responses[1].data.result[0];
 
-    if (this.transaction.unit == timeStamp) {
-      return;
-    }
-    callback(`
-    Token Name: Please get API pro\n
-    from: ${from}\n
-    to: ${to}\n
-    Price: Please get API pro\n
-    Total Circulation: Please get API pro\n
-    Transcation Timestamp: ${timeStamp}\n
-    GasPrice: ${gasPrice}\n
-    Block Number: ${blockNumber}\n
-    value: ${value}\n
-      `);
+        const { type, description } = responses[2].data.transactions[0];
+        let recieved = description.split(" ");
 
-    this.transaction.unit = timeStamp;
+        console.log(responses[2].data.transactions[0]);
+        console.log(timeStamp);
+        // let main = res.data;
+        this.transaction.lastValue = timeStamp;
+        if (type == "receive") {
+          if (this.transaction.unit == timeStamp) {
+            return;
+          }
+          callback(
+            `<b>${ContractName}</b>\n<b>Spent</b>: ${from}\n<b>Got</b>: ${recieved[1]} ${recieved[2]}\n<b>Buyer Position</b>: Please get API pro\n<b>Buyer ETH Value</b>: Please get API pro\n<b>Buy #</b>: ${gasPrice}\n<a href="https://etherscan.io/"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="https://telegram.com/"><b>Telegram</b></a> |  <a href="https://uniswap.com/"><b>Uniswap</b></a>`
+          );
+        } else {
+        }
+
+        this.transaction.unit = timeStamp;
+      })
+    );
   }
 }
 
