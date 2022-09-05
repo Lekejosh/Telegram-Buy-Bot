@@ -353,80 +353,13 @@ const tokenVerify = new WizardScene(
     return ctx.scene.leave();
   }
 );
-// const btokenVerify = new WizardScene(
-//   "btoken",
-//   (ctx) => {
-//     ctx.reply("Enter Your Token Address");
-//     ctx.wizard.state.data = {};
-//     return ctx.wizard.next();
-//   },
-//   (ctx) => {
-//     ctx.wizard.state.data.address = ctx.message.text;
-//     const tokenAddress = ctx.wizard.state.data.address;
-//     bverifyToken
-//       .bvalidation(tokenAddress)
-//       .then((res) => {
-//         const { status, result } = res.data;
-
-//         if (result[0].ContractName == "" || status == 0) {
-//           ctx.reply("Address is not valid");
-//         } else {
-//           var chatId = ctx.chat.id;
-//           User.findOne({
-//             "bscAddress.name": result[0].ContractName,
-//           }).then((user) => {
-//             if (user) {
-//               ctx.reply("Address already exists");
-//             } else {
-//               var chatId = ctx.chat.id;
-//               const newUser = User.findOneAndUpdate(
-//                 { chatId },
-//                 {
-//                   $push: {
-//                     bscAddress: {
-//                       name: result[0].ContractName,
-//                       token_Address: tokenAddress,
-//                     },
-//                   },
-//                 }
-//               ).then((neww) => {
-//                 console.log(neww);
-//               });
-//               // ctx.reply(`${result[0].ContractName}....`);
-//               bot.telegram.sendMessage(
-//                 ctx.chat.id,
-//                 `Contract Name found ${ctx.chat.title}`,
-//                 {
-//                   reply_markup: {
-//                     inline_keyboard: [
-//                       [
-//                         {
-//                           text: `${result[0].ContractName}`,
-//                           callback_data: "save",
-//                         },
-//                       ],
-//                     ],
-//                   },
-//                 }
-//               );
-//             }
-//           });
-//         }
-//       })
-//       .catch((err) => ctx.reply(err.message));
-//     return ctx.scene.leave();
-//   }
-// );
+// Stage
 
 const stage = new Stage([tokenVerify]);
 bot.use(session());
 bot.use(stage.middleware());
 
 bot.action(ethList, Stage.enter("token"));
-
-// bot.action(bscList, (ctx) => {
-//   Stage.enter("btoken")(ctx);
-// });
 
 bot.action("cancel", (ctx) => {
   ctx.deleteMessage();
