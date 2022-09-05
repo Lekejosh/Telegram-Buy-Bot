@@ -3,7 +3,7 @@ const bsctransaction = require("./blockchain transaction/bsccrypt");
 class Bot {
   constructor(bot) {
     this.bot = bot;
-    // this.transaction = new transaction();
+    this.transaction = new transaction();
     this.bsctransaction = new bsctransaction();
   }
 
@@ -16,27 +16,27 @@ class Bot {
   // }
 
   sendMessages(message) {
-    this.bot.telegram.sendMessage(-610768825, message);
+    this.bot.telegram.sendMessage(-1001573064067, message);
   }
 
-  // async watchChanges() {
-  //   try {
-  //     await Promise.all([
-  //       this.transaction.getTransaction(this.sendMessages.bind(this)),
-  //     ]);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
   async watchChanges() {
     try {
       await Promise.all([
-        this.bsctransaction.getbscTransaction(this.sendMessages.bind(this)),
+        this.transaction.getTransaction(this.sendMessages.bind(this)),
       ]);
     } catch (error) {
       console.error(error);
     }
   }
+  // async watchChanges() {
+  //   try {
+  //     await Promise.all([
+  //       this.bsctransaction.getbscTransaction(this.sendMessages.bind(this)),
+  //     ]);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 
   // async keyboardBrazilExchanges() {
   //   const keys = await btcBrl.getExchangesBtcBrl();
