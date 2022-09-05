@@ -11,6 +11,7 @@ const WizardScene = require("telegraf/scenes/wizard");
 const bot = new Telegraf("5561811963:AAFV83oL535KmiZOHwkSIybgiwmoCAxUCxQ");
 const instance = new Robot(bot);
 
+// Bot alert interval
 setInterval(async () => {
   try {
     instance.watchChanges();
@@ -19,6 +20,8 @@ setInterval(async () => {
     return;
   }
 }, 8000);
+
+// Session start
 
 bot.use(function (ctx, next) {
   if (ctx.chat.id > 0) return next();
@@ -36,6 +39,8 @@ bot.use(function (ctx, next) {
     .then((_) => next(ctx));
 });
 
+//Token add and Database Save
+
 bot.command("addtoken", (ctx, next) => {
   if (ctx.from._is_in_admin_list) {
     User.findOne({ chatId: ctx.chat.id }).then((user) => {
@@ -52,8 +57,6 @@ bot.command("addtoken", (ctx, next) => {
   } else {
     return next();
   }
-
-  // "Some User token"
 
   if (ctx.from._is_in_admin_list) {
     const test_welcome = {
@@ -98,6 +101,8 @@ bot.action("plus", function (ctx) {
   }
 });
 
+// Settings
+
 bot.action("setting", function (ctx) {
   if (ctx.from._is_in_admin_list) {
     ctx.deleteMessage();
@@ -118,6 +123,8 @@ bot.action("setting", function (ctx) {
     return;
   }
 });
+
+//Token Add function
 
 bot.action("add", function (ctx) {
   if (ctx.from._is_in_admin_list) {
@@ -142,6 +149,8 @@ bot.action("add", function (ctx) {
     return ctx.reply("Denied");
   }
 });
+
+//ETH action
 
 bot.action("eth", function (ctx) {
   if (ctx.from._is_in_admin_list) {
@@ -206,70 +215,6 @@ bot.action("eth", function (ctx) {
     return;
   }
 });
-
-// bot.action("bsc", function (ctx) {
-//   if (ctx.from._is_in_admin_list) {
-//     ctx.deleteMessage();
-//     bot.telegram.sendMessage(ctx.chat.id, text.token, {
-//       reply_markup: {
-//         inline_keyboard: [
-//           [
-//             {
-//               text: "Uniswap",
-//               callback_data: "bUniswap",
-//             },
-//             {
-//               text: "Pancakeswap",
-//               callback_data: "bPancakeswap",
-//             },
-//           ],
-//           [
-//             {
-//               text: "Uniswap v3",
-//               callback_data: "bUniswapV3",
-//             },
-//             {
-//               text: "biswap",
-//               callback_data: "bBiswap",
-//             },
-//           ],
-//           [
-//             {
-//               text: "Sushiswap",
-//               callback_data: "bSushiswap",
-//             },
-//             {
-//               text: "pyeswap",
-//               callback_data: "bPyeswap",
-//             },
-//           ],
-//           [
-//             {
-//               text: "shibaswap",
-//               callback_data: "bShibaswap",
-//             },
-//             {
-//               text: "busta",
-//               callback_data: "bBusta",
-//             },
-//           ],
-//           [
-//             {
-//               text: ">>cancel",
-//               callback_data: "cancel",
-//             },
-//             {
-//               text: ">>cancel",
-//               callback_data: "cancel",
-//             },
-//           ],
-//         ],
-//       },
-//     });
-//   } else {
-//     return;
-//   }
-// });
 let ethList = [
   "e-Uniswap",
   "e-Pancakeswap",
@@ -278,15 +223,8 @@ let ethList = [
   "e-Sushiswap",
   "e-Busta",
 ];
-// let bscList = [
-//   "bUniswap",
-//   "bPancakeswap",
-//   "bUniswapV3",
-//   "bBiswap",
-//   "bSushiswap",
-//   "bBusta",
-// ];
 
+// Token Stage
 const tokenVerify = new WizardScene(
   "token",
   (ctx, next) => {
@@ -353,22 +291,26 @@ const tokenVerify = new WizardScene(
     return ctx.scene.leave();
   }
 );
-// Stage
-
 const stage = new Stage([tokenVerify]);
 bot.use(session());
 bot.use(stage.middleware());
 
+//ETHList action
 bot.action(ethList, Stage.enter("token"));
 
+// Cancel Action
 bot.action("cancel", (ctx) => {
   ctx.deleteMessage();
   ctx.reply("bye");
 });
 
+//Save Token
+
 bot.action("save", (ctx) => {
   ctx.reply("Token Added to Buildgr33bot");
 });
+
+//DB connect and Bot launch
 
 const init = async () => {
   mongoose
