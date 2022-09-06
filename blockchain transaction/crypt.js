@@ -20,7 +20,6 @@ class transaction {
         const { type, description } = responses[2].data.transactions[0];
         let recieved = description.split(" ");
 
-        console.log(responses[2].data.transactions[0]);
         console.log(timeStamp);
         // let main = res.data;
         this.transaction.lastValue = timeStamp;

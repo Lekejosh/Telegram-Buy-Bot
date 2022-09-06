@@ -49,6 +49,12 @@ bot.command("addtoken", (ctx, next) => {
       } else {
         const newUser = User.create({
           chatId: ctx.chat.id,
+          telegram: "null",
+          step: "$100",
+          cSupply: "null",
+          emoji: "null",
+          mEnable: "null",
+          mImage: "null",
         }).then((neww) => {
           console.log(neww);
         });
@@ -106,22 +112,111 @@ bot.action("plus", function (ctx) {
 bot.action("setting", function (ctx) {
   if (ctx.from._is_in_admin_list) {
     ctx.deleteMessage();
-    bot.telegram.sendMessage(ctx.chat.id, text.setting, {
-      reply_markup: {
-        inline_keyboard: [
-          [
+    const chatId = ctx.chat.id;
+    User.find({ chatId }, (error, data) => {
+      if (error) {
+        console.log(err);
+      } else {
+        console.log(data[0].ethAddress);
+        const keyboard = [];
+        for (let i = 0; i < data[0].ethAddress.length; i++) {
+          keyboard.push([
             {
-              text: "Token Setting",
-              callback_data: "setting",
+              text: `${data[0].ethAddress[i].name}`,
+              callback_data: "tsetting",
             },
-          ],
-          [{ text: ">>Cancel", callback_data: "cancel" }],
-        ],
-      },
+          ]);
+        }
+        if (data[0].ethAddress[0] == null) {
+          ctx.reply("No token avaliable");
+        } else {
+          bot.telegram.sendMessage(ctx.chat.id, text.setting, {
+            reply_markup: JSON.stringify({
+              inline_keyboard: keyboard,
+            }),
+          });
+        }
+      }
     });
   } else {
     return;
   }
+});
+
+bot.action("tsetting", function (ctx) {
+  let chatId = ctx.chat.id;
+  User.find({ chatId }, (error, data) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(data[0].chatId);
+      if (ctx.from._is_in_admin_list) {
+        ctx.deleteMessage();
+        const set = {
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: "Telegram Group Link",
+                  callback_data: "tele",
+                },
+              ],
+              [
+                {
+                  text: `step: ${data[0].step}`,
+                  callback_data: "step",
+                },
+              ],
+              [
+                {
+                  text: `Circulating Supply: ${data[0].cSupply}`,
+                  callback_data: "cSupply",
+                },
+              ],
+              [
+                {
+                  text: `Emoji: ${data[0].emoji}`,
+                  callback_data: "emoji",
+                },
+              ],
+              [
+                {
+                  text: `Media Enabled: ${data[0].mEnable}`,
+                  callback_data: "menable",
+                },
+              ],
+              [
+                {
+                  text: `Media Image (click to view/change)`,
+                  callback_data: "mImage",
+                },
+              ],
+              [
+                {
+                  text: "Delete This Token",
+                  callback_data: "tokenDelete",
+                },
+              ],
+              [
+                {
+                  text: ">>Cancel",
+                  callback_data: "cancel",
+                },
+              ],
+            ],
+          },
+          parse_mode: "HTML",
+        };
+        bot.telegram.sendMessage(
+          ctx.chat.id,
+          `Successfully added Token Name: ${data[0].ethAddress[0].name}  to ${ctx.chat.title}.\nPlease update each of the settings below to suit your needs. If you want to change any, simply\nclick on the applicable button.\nToken Name: ${data[0].ethAddress[0].name} \nToken Address:${data[0].ethAddress[0].token_Address} \nPair Address:`,
+          set
+        );
+      } else {
+        return;
+      }
+    }
+  });
 });
 
 //Token Add function
@@ -254,7 +349,7 @@ const tokenVerify = new WizardScene(
               next();
             } else {
               var chatId = ctx.chat.id;
-              const newUser = User.findOneAndUpdate(
+              User.findOneAndUpdate(
                 { chatId },
                 {
                   $push: {

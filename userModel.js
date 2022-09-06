@@ -8,6 +8,12 @@ const userSchema = new mongoose.Schema({
   chatId: { type: String, unique: true },
   ethAddress: [{ name: String, token_Address: String }],
   bscAddress: [{ name: String, token_Address: String }],
+  telegram: String,
+  step: String,
+  cSupply: String,
+  emoji: String,
+  mEnable: String,
+  mImage: String,
 });
 const User = mongoose.model("user", userSchema);
 
