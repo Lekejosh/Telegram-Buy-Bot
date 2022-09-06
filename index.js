@@ -118,22 +118,35 @@ bot.action("setting", function (ctx) {
         console.log(err);
       } else {
         console.log(data[0].ethAddress);
-        const keyboard = [];
-        for (let i = 0; i < data[0].ethAddress.length; i++) {
-          keyboard.push([
-            {
-              text: `${data[0].ethAddress[i].name}`,
-              callback_data: "tsetting",
-            },
-          ]);
-        }
+        // const keyboard = [];
+        // for (let i = 0; i < data[0].ethAddress.length; i++) {
+        //   keyboard.push([
+        //     {
+        //       text: `${data[0].ethAddress[i].name}`,
+        //       callback_data: "tsetting",
+        //     },
+        //   ]);
+        // }
         if (data[0].ethAddress[0] == null) {
           ctx.reply("No token avaliable");
         } else {
           bot.telegram.sendMessage(ctx.chat.id, text.setting, {
-            reply_markup: JSON.stringify({
-              inline_keyboard: keyboard,
-            }),
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: `${data[0].ethAddress[0].name}`,
+                    callback_data: "tsetting",
+                  },
+                ],
+                [
+                  {
+                    text: `>>cancel`,
+                    callback_data: "cancel",
+                  },
+                ],
+              ],
+            },
           });
         }
       }
