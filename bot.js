@@ -8,7 +8,10 @@ class Bot {
   }
 
   sendMessages(message) {
-    this.bot.telegram.sendMessage(-799267120, message, { parse_mode: "HTML" });
+    this.bot.telegram.sendMessage(-685910650, message, {
+      parse_mode: "HTML",
+      disable_web_page_preview: true,
+    });
   }
 
   async watchChanges() {

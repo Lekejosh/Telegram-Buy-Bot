@@ -49,12 +49,12 @@ bot.command("addtoken", (ctx, next) => {
       } else {
         const newUser = User.create({
           chatId: ctx.chat.id,
-          telegram: "null",
-          step: "$100",
-          cSupply: "null",
-          emoji: "null",
-          mEnable: "null",
-          mImage: "null",
+          telegram: "Not Set",
+          step: "100",
+          cSupply: "100000000000000000",
+          emoji: "Not Set",
+          mEnable: "Not Set",
+          mImage: "Not Set",
         }).then((neww) => {
           console.log(neww);
         });
@@ -176,7 +176,7 @@ bot.action("tsetting", function (ctx) {
               ],
               [
                 {
-                  text: `step: ${data[0].step}`,
+                  text: `step: $ ${data[0].step}`,
                   callback_data: "step",
                 },
               ],
@@ -256,6 +256,32 @@ bot.action("add", function (ctx) {
   } else {
     return ctx.reply("Denied");
   }
+});
+
+//Token Delete
+bot.action("tokenDelete", function (ctx) {
+  const chatId = ctx.chat.id;
+  User.find({ chatId }, (error, data) => {
+    if (error) {
+      ctx.reply("Error getting user");
+    } else {
+      console.log(data[0].ethAddress);
+      let toks = data[0].ethAddress[0];
+      User.findOneAndDelete(
+        ctx.chat.id,
+        {
+          $pull: { toks },
+        },
+        (error, data) => {
+          if (error) {
+            ctx.reply("error");
+          } else {
+            ctx.reply("Deleted Successfully");
+          }
+        }
+      );
+    }
+  });
 });
 
 //ETH action
@@ -377,7 +403,7 @@ const tokenVerify = new WizardScene(
               });
               bot.telegram.sendMessage(
                 ctx.chat.id,
-                `Token Namr found\n Tap to save}`,
+                `Token found\n Tap to save`,
                 {
                   reply_markup: {
                     inline_keyboard: [
@@ -399,18 +425,234 @@ const tokenVerify = new WizardScene(
     return ctx.scene.leave();
   }
 );
-const stage = new Stage([tokenVerify]);
+
+const telegramLink = new WizardScene(
+  "tele",
+  (ctx) => {
+    ctx.reply(`Please paste your Telegram Link`);
+    ctx.wizard.state.data = {};
+    return ctx.wizard.next();
+  },
+  (ctx) => {
+    ctx.wizard.state.data.address = ctx.message.text;
+    const telegramLink = ctx.wizard.state.data.address;
+    console.log(ctx.chat.id);
+    const chatId = ctx.chat.id;
+    const user = User.findOneAndUpdate(
+      { chatId },
+      { telegram: `${telegramLink}` },
+      (error, data) => {
+        if (error) {
+          ctx.reply("Not valid");
+        } else {
+          bot.telegram.sendMessage(ctx.chat.id, `Saved Successfully`, {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: `>>Back`,
+                    callback_data: "tsetting",
+                  },
+                ],
+              ],
+            },
+          });
+        }
+      }
+    );
+    return ctx.scene.leave();
+  }
+);
+
+const Step = new WizardScene(
+  "step",
+  (ctx) => {
+    ctx.reply(`Input Step Amount`);
+    ctx.wizard.state.data = {};
+    return ctx.wizard.next();
+  },
+  (ctx) => {
+    ctx.wizard.state.data.address = ctx.message.text;
+    const step = ctx.wizard.state.data.address;
+    console.log(ctx.chat.id);
+    const chatId = ctx.chat.id;
+    const user = User.findOneAndUpdate(
+      { chatId },
+      { step: `${step}` },
+      (error, data) => {
+        if (error) {
+          ctx.reply("Not Valid... Numbers only");
+        } else {
+          bot.telegram.sendMessage(ctx.chat.id, `Saved Successfully`, {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: `>>Back`,
+                    callback_data: "tsetting",
+                  },
+                ],
+              ],
+            },
+          });
+        }
+      }
+    );
+    return ctx.scene.leave();
+  }
+);
+
+const Csupply = new WizardScene(
+  "cSupply",
+  (ctx) => {
+    ctx.reply(`Input Step Amount`);
+    ctx.wizard.state.data = {};
+    return ctx.wizard.next();
+  },
+  (ctx) => {
+    ctx.wizard.state.data.address = ctx.message.text;
+    const supply = ctx.wizard.state.data.address;
+    console.log(ctx.chat.id);
+    const chatId = ctx.chat.id;
+    const user = User.findOneAndUpdate(
+      { chatId },
+      { cSupply: `${supply}` },
+      (error, data) => {
+        if (error) {
+          ctx.reply("Nummbers only");
+        } else {
+          bot.telegram.sendMessage(ctx.chat.id, `Saved Successfully`, {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: `>>Back`,
+                    callback_data: "tsetting",
+                  },
+                ],
+              ],
+            },
+          });
+        }
+      }
+    );
+    return ctx.scene.leave();
+  }
+);
+
+const Emoji = new WizardScene(
+  "emoji",
+  (ctx) => {
+    ctx.reply(`Input Emoji`);
+    ctx.wizard.state.data = {};
+    return ctx.wizard.next();
+  },
+  (ctx) => {
+    ctx.wizard.state.data.address = ctx.message.text;
+    const emoji = ctx.wizard.state.data.address;
+    console.log(ctx.chat.id);
+    const chatId = ctx.chat.id;
+    const user = User.findOneAndUpdate(
+      { chatId },
+      { emoji: `${emoji}` },
+      (error, data) => {
+        if (error) {
+          ctx.reply(`Not accepted`);
+        } else {
+          bot.telegram.sendMessage(ctx.chat.id, `Saved Successfully`, {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: `>>Back`,
+                    callback_data: "tsetting",
+                  },
+                ],
+              ],
+            },
+          });
+        }
+      }
+    );
+    return ctx.scene.leave();
+  }
+);
+
+const Media = new WizardScene(
+  "menable",
+  (ctx) => {
+    ctx.reply(`Please type in 1 for Yes and 0 for No`);
+    ctx.wizard.state.data = {};
+    return ctx.wizard.next();
+  },
+  (ctx) => {
+    ctx.wizard.state.data.address = ctx.message.text;
+    const menable = ctx.wizard.state.data.address;
+    console.log(ctx.chat.id);
+    const chatId = ctx.chat.id;
+    const user = User.findOneAndUpdate(
+      { chatId },
+      { mEnable: `${menable}` },
+      (error, data) => {
+        if (error) {
+          ctx.reply(`Not accepted`);
+        } else {
+          bot.telegram.sendMessage(ctx.chat.id, `Saved Successfully`, {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: `>>Back`,
+                    callback_data: "tsetting",
+                  },
+                ],
+              ],
+            },
+          });
+        }
+      }
+    );
+    return ctx.scene.leave();
+  }
+);
+
+const stage = new Stage([
+  tokenVerify,
+  telegramLink,
+  Step,
+  Csupply,
+  Emoji,
+  Media,
+]);
 bot.use(session());
 bot.use(stage.middleware());
 
 //ETHList action
 bot.action(ethList, Stage.enter("token"));
-
+bot.action("tele", (ctx) => {
+  Stage.enter("tele")(ctx);
+});
+bot.action("step", (ctx) => {
+  Stage.enter("step")(ctx);
+});
+bot.action("cSupply", (ctx) => {
+  Stage.enter("cSupply")(ctx);
+});
+bot.action("emoji", (ctx) => {
+  Stage.enter("emoji")(ctx);
+});
+bot.action("menable", (ctx) => {
+  Stage.enter("menable")(ctx);
+});
 // Cancel Action
 bot.action("cancel", (ctx) => {
   ctx.deleteMessage();
   ctx.reply("bye");
 });
+
+// bot.action("savel", (ctx) => {
+//   ctx.reply("setting Added");
+// });
 
 //Save Token
 
