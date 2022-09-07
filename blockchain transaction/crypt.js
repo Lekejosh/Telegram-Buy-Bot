@@ -30,7 +30,7 @@ class transaction {
             return;
           }
           callback(
-            `<b>${ContractName}</b>\n<b>Spent</b>: N\A \n<b>Got</b>: ${recieved[1]} ${recieved[2]}\n<b>Buyer Position</b>: N\A \n<b>Buyer ETH Value</b>: N\A \n<b>Buy #</b>: N\A \n<a href="https://etherscan.io/tx/${hash}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="https://telegram.com/"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
+            `<b>${ContractName} Buy</b>\n<b>Spent</b>: N\A \n<b>Got</b>: ${recieved[1]} ${recieved[2]}\n<b>Buyer Position</b>: N\A \n<b>Buyer ETH Value</b>: N\A \n<b>Buy #</b>: N\A \n<a href="https://etherscan.io/tx/${hash}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="https://telegram.com/"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
           );
         } else {
         }
