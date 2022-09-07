@@ -1,14 +1,12 @@
-const transaction = require("./blockchain transaction/crypt");
-// const bsctransaction = require("./blockchain transaction/bsccrypt");
+const transaction = require("./crypt");
 class Bot {
   constructor(bot) {
     this.bot = bot;
     this.transaction = new transaction();
-    // this.bsctransaction = new bsctransaction();
   }
 
   sendMessages(message) {
-    this.bot.telegram.sendMessage(-685910650, message, {
+    this.bot.telegram.sendMessage(-1001573064067, message, {
       parse_mode: "HTML",
       disable_web_page_preview: true,
     });

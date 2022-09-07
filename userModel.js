@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   step: { type: Number },
   cSupply: { type: Number },
   emoji: { type: String },
-  mEnable: { type: String },
+  mEnable: { type: Boolean },
   mImage: {
     data: Buffer,
     contentType: String,
