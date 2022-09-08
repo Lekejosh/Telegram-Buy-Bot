@@ -5,12 +5,12 @@ const text = require("./text.json");
 const verifyToken = require("./ethvalidate");
 const User = require("./userModel");
 const Stage = require("telegraf/stage");
-// // Transaction Robot
-// const Robot = require("./Transaction Detect/bot");
+// Transaction Robot
+const Robot = require("./Transaction Detect/bot");
 const WizardScene = require("telegraf/scenes/wizard");
 const bot = new Telegraf("Put Your Telegram API KEY here");
 // //Transaction RObot Instance
-// const instance = new Robot(bot);
+const instance = new Robot(bot);
 
 // Bot alert interval
 setInterval(async () => {
