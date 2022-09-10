@@ -6,9 +6,9 @@ const verifyToken = require("./ethvalidate");
 const User = require("./userModel");
 const Stage = require("telegraf/stage");
 // Transaction Robot
-const Robot = require("./Transaction Detect/bot");
+const Robot = require("./transactionDetect/bot");
 const WizardScene = require("telegraf/scenes/wizard");
-const bot = new Telegraf("Put Your Telegram API KEY here");
+const bot = new Telegraf("5561811963:AAFV83oL535KmiZOHwkSIybgiwmoCAxUCxQ");
 // //Transaction RObot Instance
 const instance = new Robot(bot);
 
