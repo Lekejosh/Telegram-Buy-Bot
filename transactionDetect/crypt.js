@@ -14,6 +14,8 @@ class transaction {
     const res = await axios.get(services.balance);
     const con = await axios.get(services.contractN);
     const vall = await axios.get(services.values);
+    let quo = vall.data.transactions[0].received[0].quote;
+    let rate = vall.data.transactions[0].received[0].quoteRate;
     const val = await axios.get(
       `https://api.unmarshal.com/v1/ethereum/address/${res.data.result[0].from}/assets?verified=true&chainId=false&token=false&auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
     );
@@ -30,8 +32,19 @@ class transaction {
       }
     );
     const usdPrice = await axios.get(
+      `https://pro-api.coinmarketcap.com/v2/tools/price-conversion?symbol=USD&convert=ETH&amount=${
+        quo * rate
+      }`,
+      {
+        headers: {
+          "X-CMC_PRO_API_KEY": "98faa061-7512-412a-a012-9866c329b3c4",
+        },
+      }
+    );
+    console.log(usdPrice);
+    const usdPrice2 = await axios.get(
       `https://pro-api.coinmarketcap.com/v2/tools/price-conversion?symbol=ETH&amount=${
-        vall.data.transactions[0].fee / 10 ** 18
+        val.data[0].balance / 10 ** 18
       }`,
       {
         headers: {
@@ -40,21 +53,21 @@ class transaction {
       }
     );
     console.log(usdPrice.data.data[0].quote);
-    axios.all([res, con, vall, val, coun, respons, usdPrice]).then(
+    axios.all([res, con, vall, val, coun, respons, usdPrice, usdPrice2]).then(
       axios.spread((...responses) => {
         const { from, hash } = responses[0].data.result[0];
         const { ContractName } = responses[1].data.result[0];
 
-        const { date, fee, type, description } =
-          responses[2].data.transactions[0];
-        // const { value } = responses[2].data.transactions[0].others;
+        const { date, type, description } = responses[2].data.transactions[0];
+        const { quote, quoteRate } =
+          responses[2].data.transactions[0].received[0];
 
-        const { balance, quote } = responses[3].data[0];
+        const { balance } = responses[3].data[0];
 
-        const { price } = responses[5].data.data.BUILD[2].quote.USD;
         const { total_transaction_count } = responses[4].data;
         const { total_supply } = responses[5].data.data.BUILD[2];
-        cons;
+        const usdConvert = responses[6].data.data[0].quote.ETH.price;
+        const usdConvert2 = responses[7].data.data[0].quote.USD.price;
 
         let recieved = description.split(" ");
 
@@ -71,17 +84,19 @@ class transaction {
             } else {
               callback(
                 `<b>${ContractName} Buy</b>\n${data[0].emoji}\n<b>Spent</b>: ${(
-                  fee /
+                  quote * quoteRate
+                ).toFixed(7)} USD (${usdConvert.toFixed(3)} ETH)\n<b>Got</b>: ${
+                  recieved[1]
+                } ${recieved[2]}\n<b>Buyer ETH Value</b>: ${(
+                  balance /
                   10 ** 18
-                ).toFixed(7)} ETH\n<b>Got</b>: ${recieved[1]} ${
-                  recieved[2]
-                }\n<b>Buyer ETH Value</b>: ${(balance / 10 ** 18).toFixed(
-                  7
-                )}\n<b>Buyer Position</b>: N\A\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${price.toFixed(
-                  14
-                )} \n<b>MCap</b>: $${Math.round(
-                  price * total_supply
-                )}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${hash}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
+                ).toFixed(7)} (${usdConvert2.toFixed(
+                  3
+                )} USD)\n<b>Buyer Position</b>: N\A\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${rate.toFixed(
+                  8
+                )} \n<b>MCap</b>: $${
+                  rate * total_supply * 10 ** -7
+                }K\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${hash}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
                   data[0].telegram
                 }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
               );
