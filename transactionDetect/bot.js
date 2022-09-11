@@ -1,11 +1,5 @@
 const transaction = require("./crypt");
 const User = require("../userModel");
-
-//  User.find((error, data) => {
-//   if(error)
-//  }else{
-
-//  });
 class Bot {
   constructor(bot) {
     this.bot = bot;
