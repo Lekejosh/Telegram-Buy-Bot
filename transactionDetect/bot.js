@@ -9,6 +9,8 @@ class Bot {
 
   // Replace the "-1001573064067" with your chatId from your database
 
+  // Send Alert message
+
   sendMessages(message) {
     for (let i = 0; i < User.length; i++) {
       User.find((error, data) => {

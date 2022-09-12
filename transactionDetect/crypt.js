@@ -10,6 +10,8 @@ class transaction {
     this.transaction.unit = "";
   }
 
+  //Get transaction details APIs
+
   async getTransaction(callback) {
     const res = await axios.get(services.balance);
     const con = await axios.get(services.contractN);
@@ -72,7 +74,8 @@ class transaction {
         let recieved = description.split(" ");
 
         console.log(date);
-        // let main = res.data;
+
+        // Sending ALert details
         this.transaction.lastValue = date;
         if (type == "receive") {
           if (this.transaction.unit == date) {
@@ -92,7 +95,7 @@ class transaction {
                 )} \n<b>Buyer Position</b>: N\A\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${rate.toFixed(
                   8
                 )} \n<b>MCap</b>: $${
-                  rate * total_supply * 10 ** -7
+                  quoteRate * total_supply * 10 ** -7
                 }K\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${hash}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
                   data[0].telegram
                 }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
