@@ -266,6 +266,12 @@ bot.action("tsetting", function (ctx) {
               ],
               [
                 {
+                  text: "Save Token settings",
+                  callback_data: "save",
+                },
+              ],
+              [
+                {
                   text: ">>Cancel",
                   callback_data: "cancel",
                 },
@@ -479,14 +485,14 @@ const tokenVerify = new WizardScene(
               });
               bot.telegram.sendMessage(
                 ctx.chat.id,
-                `Token found\n Tap to save`,
+                `Token found\n Tap to set alert info`,
                 {
                   reply_markup: {
                     inline_keyboard: [
                       [
                         {
                           text: `${result[0].ContractName}`,
-                          callback_data: "save",
+                          callback_data: "setting",
                         },
                       ],
                     ],
@@ -748,7 +754,7 @@ bot.action("cancel", (ctx) => {
 
 //Save Token
 bot.action("save", (ctx) => {
-  ctx.reply("Token Added to Buildgr33bot");
+  ctx.reply("Saved");
 });
 
 //DB connect and Bot launch

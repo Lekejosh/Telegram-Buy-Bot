@@ -20,7 +20,7 @@ class Bot {
           for (let j = 0; j < data[i]?.ethAddress?.length; j++) {
             console.log(data[i]?.chatId);
             console.log(data[i]?.ethAddress[j]?.token_Address);
-            this.bot.telegram.sendMessage(data[i]?.chatId, message, {
+            this.bot.telegram.sendMessage(-642792299, message, {
               parse_mode: "HTML",
               disable_web_page_preview: true,
             });

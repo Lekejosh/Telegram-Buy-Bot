@@ -62,7 +62,7 @@ class transaction {
         const { date, type, description } =
           responses[2]?.data?.transactions[0] || {};
         const { quote, quoteRate } =
-          responses[2]?.data.transactions[0]?.received || {};
+          responses[2].data.transactions[0].received[0] || {};
 
         const { balance } = responses[3]?.data[0] || {};
 
@@ -86,17 +86,20 @@ class transaction {
               console.log(error);
             } else {
               callback(
-                `<b>${ContractName} Buy</b>\n${data[0].emoji}\n<b>Spent</b>: ${(
-                  quote * quoteRate
-                ).toFixed(7)} USD \n<b>Got</b>: ${recieved[1]} ${
-                  recieved[2]
-                }\n<b>Buyer ETH Value</b>: ${(balance / 10 ** 18).toFixed(
+                `<b>${ContractName} Buy</b>\n${
+                  data[0].emoji
+                }\n<b>Spent</b>: ${quote.toFixed(9)} USD \n<b>Got</b>: ${
+                  recieved[1]
+                } ${recieved[2]}\n<b>Buyer ETH Value</b>: ${(
+                  balance /
+                  10 ** 18
+                ).toFixed(
                   7
-                )} \n<b>Buyer Position</b>: N\A\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${rate.toFixed(
-                  8
-                )} \n<b>MCap</b>: $${
-                  quoteRate * total_supply * 10 ** -7
-                }K\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${hash}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
+                )} \n<b>Buyer Position</b>: N\A\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${quoteRate.toFixed(
+                  12
+                )} \n<b>MCap</b>: $ ${(quoteRate * total_supply).toFixed(
+                  4
+                )}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${hash}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
                   data[0].telegram
                 }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
               );
