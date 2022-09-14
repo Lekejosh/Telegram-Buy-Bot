@@ -100,7 +100,7 @@ bot.action("plus", function (ctx) {
           ],
           [{ text: "Token Setting", callback_data: "setting" }],
         ],
-      },
+      },  
     });
   } else {
     return;
