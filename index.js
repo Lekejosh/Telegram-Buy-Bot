@@ -40,6 +40,8 @@ bot.use(function (ctx, next) {
     .then((_) => next(ctx));
 });
 
+
+
 //Token add and Database Save
 
 bot.command("addtoken", (ctx, next) => {
@@ -100,7 +102,7 @@ bot.action("plus", function (ctx) {
           ],
           [{ text: "Token Setting", callback_data: "setting" }],
         ],
-      },  
+      },
     });
   } else {
     return;
