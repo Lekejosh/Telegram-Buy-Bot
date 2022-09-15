@@ -16,9 +16,6 @@ class transaction {
       const res = await axios.get(services.balance);
       const con = await axios.get(services.contractN);
       const vall = await axios.get(services.values);
-
-      let quo = vall.data?.transactions[0]?.received?.quote;
-      let rate = vall.data?.transactions[0]?.received?.quoteRate;
       const val = await axios.get(
         `https://api.unmarshal.com/v1/ethereum/address/${res.data.result[0].from}/assets?verified=true&chainId=false&token=false&auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
       );
@@ -26,19 +23,19 @@ class transaction {
       const coun = await axios.get(
         `https://api.unmarshal.com/v1/ethereum/address/${res.data.result[0].from}/transactions/count?auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
       );
-      const respons = await axios.get(
-        "https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=BUILD",
-        {
-          headers: {
-            "X-CMC_PRO_API_KEY": "98faa061-7512-412a-a012-9866c329b3c4",
-          },
-        }
-      );
+      // const respons = await axios.get(
+      //   "https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=BUILD",
+      //   {
+      //     headers: {
+      //       "X-CMC_PRO_API_KEY": "98faa061-7512-412a-a012-9866c329b3c4",
+      //     },
+      //   }
+      // );
       const priceS = await axios.get(
         `https://api.unmarshal.com/v1/pricestore/chain/ethereum/0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF?timestamp=${vall.data.transactions[0].date}&auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
       );
       const supplyS = await axios.get(services.supply);
-      axios.all([res, con, vall, val, coun, respons, priceS, supplyS]).then(
+      axios.all([res, con, vall, val, coun, priceS, supplyS]).then(
         axios.spread((...responses) => {
           const { hash } = responses[0]?.data?.result[0] || {};
           const { ContractName } = responses[1]?.data?.result[0] || {};
