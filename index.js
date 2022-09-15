@@ -25,6 +25,8 @@ setInterval(async () => {
 // Session start
 
 bot.use(function (ctx, next) {
+  console.log(ctx.startPayload);
+
   if (ctx.chat.id > 0) return next();
   return bot.telegram
     .getChatAdministrators(ctx.chat.id)
@@ -40,7 +42,7 @@ bot.use(function (ctx, next) {
     .then((_) => next(ctx));
 });
 
-
+bot.start((ctx) => ctx.reply(`Deep link Payload:${ctx.startPayload}`));
 
 //Token add and Database Save
 
@@ -257,7 +259,7 @@ bot.action("tsetting", function (ctx) {
               [
                 {
                   text: `Media Image (click to view/change)`,
-                  callback_data: "mImage",
+                  callback_data: "mImages",
                 },
               ],
               [
@@ -550,6 +552,48 @@ const telegramLink = new WizardScene(
   }
 );
 
+const mImage = new WizardScene(
+  "mediaImage",
+  (ctx) => {
+    ctx.reply(`Please send your transaction Image`);
+    ctx.wizard.state.data = {};
+    return ctx.wizard.next();
+  },
+  (ctx) => {
+    ctx.wizard.state.data.image = ctx.update.message.photo;
+    let photos = ctx.wizard.state.data.image;
+    const { file_id: fileId } = photos[photos.length - 1];
+    const fileUrl = ctx.telegram.getFileLink(fileId);
+    let buffer = fileManager.getBuffer(fileUrl);
+
+    console.log(buffer);
+    // const chatId = ctx.chat.id;
+    // const user = User.findOneAndUpdate(
+    //   { chatId },
+    //   { mImage: `${mmImage}` },
+    //   (error, data) => {
+    //     if (error) {
+    //       ctx.reply("Not valid");
+    //     } else {
+    //       bot.telegram.sendMessage(ctx.chat.id, `Saved Successfully`, {
+    //         reply_markup: {
+    //           inline_keyboard: [
+    //             [
+    //               {
+    //                 text: `>>Back`,
+    //                 callback_data: "tsetting",
+    //               },
+    //             ],
+    //           ],
+    //         },
+    //       });
+    //     }
+    //   }
+    // );
+    return ctx.scene.leave();
+  }
+);
+
 const Step = new WizardScene(
   "step",
   (ctx) => {
@@ -704,22 +748,6 @@ const Media = new WizardScene(
   }
 );
 
-bot.action("mImage", (ctx) => {
-  chatId = ctx.chat.id;
-  User.find({ chatId }, (error, data) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(data[0].mEnable);
-      if (data[0].mEnable == false) {
-        ctx.reply("Media is not enabled... Enable in settings");
-      } else {
-        ctx.reply("Setting not available ATM");
-      }
-    }
-  });
-});
-
 const stage = new Stage([
   tokenVerify,
   telegramLink,
@@ -727,7 +755,9 @@ const stage = new Stage([
   Csupply,
   Emoji,
   Media,
+  mImage,
 ]);
+
 bot.use(session());
 bot.use(stage.middleware());
 
@@ -747,6 +777,21 @@ bot.action("emoji", (ctx) => {
 });
 bot.action("menable", (ctx) => {
   Stage.enter("menable")(ctx);
+});
+bot.action("mImages", (ctx) => {
+  chatId = ctx.chat.id;
+  User.find({ chatId }, (error, data) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(data[0].mEnable);
+      if (data[0].mEnable == false) {
+        ctx.reply("Media is not enabled... Enable in settings");
+      } else {
+        Stage.enter("mediaImage")(ctx);
+      }
+    }
+  });
 });
 
 // Cancel Action

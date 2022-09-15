@@ -17,6 +17,7 @@ class transaction {
       const res = await axios.get(services.balance);
       const con = await axios.get(services.contractN);
       const vall = await axios.get(services.values);
+
       let quo = vall.data?.transactions[0]?.received?.quote;
       let rate = vall.data?.transactions[0]?.received?.quoteRate;
       const val = await axios.get(
@@ -34,6 +35,8 @@ class transaction {
           },
         }
       );
+      const priceS = await axios.get(services.price);
+      const supplyS = await axios.get(services.supply);
       // const usdPrice = await axios.get(
       //   `https://pro-api.coinmarketcap.com/v2/tools/price-conversion?symbol=USD&convert=ETH&amount=${
       //     quo * rate
@@ -55,7 +58,7 @@ class transaction {
       //     },
       //   }
       // );
-      axios.all([res, con, vall, val, coun, respons]).then(
+      axios.all([res, con, vall, val, coun, respons, priceS, supplyS]).then(
         axios.spread((...responses) => {
           const { hash } = responses[0]?.data?.result[0] || {};
           const { ContractName } = responses[1]?.data?.result[0] || {};
@@ -63,14 +66,17 @@ class transaction {
           const { date, type, description } =
             responses[2]?.data?.transactions[0] || {};
           const { received } = responses[2].data.transactions[0] || {};
-          
 
           const { balance } = responses[3]?.data[0] || {};
 
           const { total_transaction_count } = responses[4]?.data || {};
-          const { total_supply } = responses[5]?.data?.data?.BUILD[2] || {};
+          // const { total_supply } = responses[5]?.data?.data?.BUILD[2] || {};
           // const usdConvert = responses[6].data.data[0].quote.ETH.price;
           // const usdConvert2 = responses[7].data.data[0].quote.USD.price;
+          const { price } = responses[6]?.data[0];
+          console.log(price);
+          const { total_supply } = responses[7]?.data;
+          console.log(total_supply);
 
           let recieved = description.split(" ");
 
@@ -95,11 +101,9 @@ class transaction {
                     recieved[2]
                   }\n<b>Buyer ETH Value</b>: ${(balance / 10 ** 18).toFixed(
                     7
-                  )} \n<b>Buyer Position</b>: N\A\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${received[0].quoteRate.toFixed(
-                    12
-                  )} \n<b>MCap</b>: $ ${(
-                    received[0].quoteRate * total_supply
-                  ).toFixed(
+                  )} \n<b>Buyer Position</b>: N\A\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${price.toPrecision(
+                    4
+                  )} \n<b>MCap</b>: $ ${(price * total_supply).toFixed(
                     4
                   )}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${hash}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
                     data[0].telegram
