@@ -69,72 +69,88 @@ class transaction {
               if (error) {
                 console.log(error);
               } else {
-                function step() {
-                  if (total_transaction_count <= data[0].step) {
-                    callback(
-                      `<b>${ContractName} Buy</b>\n${
-                        data[0].emoji
-                      }\n<b>Spent</b>: ${(recieved[1] * price).toPrecision(
-                        4
-                      )} USD \n<b>Got</b>: ${recieved[1]} ${
-                        recieved[2]
-                      }\n<b>Buyer ETH Value</b>: ${(balance / 10 ** 18).toFixed(
-                        7
-                      )} \n<b>Buyer Position</b>: N\A\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${price} \n<b>MCap</b>: $ ${(
-                        price * total_supply
-                      ).toFixed(
-                        4
-                      )}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${hash}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
-                        data[0].telegram
-                      }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
-                    );
-                  } else if (
-                    total_transaction_count >
-                    data[0].step <
-                    data[0].step + data[0].step
-                  ) {
-                    callback(
-                      `<b>${ContractName} Buy</b>\n${data[0].emoji}${
-                        data[0].emoji
-                      }\n<b>Spent</b>: ${(recieved[1] * price).toPrecision(
-                        4
-                      )} USD \n<b>Got</b>: ${recieved[1]} ${
-                        recieved[2]
-                      }\n<b>Buyer ETH Value</b>: ${(balance / 10 ** 18).toFixed(
-                        7
-                      )} \n<b>Buyer Position</b>: N\A\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${price} \n<b>MCap</b>: $ ${(
-                        price * total_supply
-                      ).toFixed(
-                        4
-                      )}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${hash}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
-                        data[0].telegram
-                      }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
-                    );
-                  } else if (
-                    total_transaction_count >
-                    data[0].step + data[0].step
-                  ) {
-                    callback(
-                      `<b>${ContractName} Buy</b>\n${data[0].emoji}${
-                        data[0].emoji
-                      }${data[0].emoji}
-                      }\n<b>Spent</b>: ${(recieved[1] * price).toPrecision(
-                        4
-                      )} USD \n<b>Got</b>: ${recieved[1]} ${
-                        recieved[2]
-                      }\n<b>Buyer ETH Value</b>: ${(balance / 10 ** 18).toFixed(
-                        7
-                      )} \n<b>Buyer Position</b>: N\A\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${price} \n<b>MCap</b>: $ ${(
-                        price * total_supply
-                      ).toFixed(
-                        4
-                      )}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${hash}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
-                        data[0].telegram
-                      }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
-                    );
-                  }
+                if (recieved[1] * price <= data[0].step) {
+                  callback(
+                    `<b>${ContractName} Buy</b>\n${
+                      data[0].emoji
+                    }\n<b>Spent</b>: ${(recieved[1] * price).toPrecision(
+                      4
+                    )} USD \n<b>Got</b>: ${recieved[1]} ${
+                      recieved[2]
+                    }\n<b>Buyer ETH Value</b>: ${(balance / 10 ** 18).toFixed(
+                      7
+                    )} \n<b>Buyer Position</b>: N\A\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${price} \n<b>MCap</b>: $ ${(
+                      price * total_supply
+                    ).toFixed(
+                      4
+                    )}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${hash}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
+                      data[0].telegram
+                    }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
+                  );
+                } else if (
+                  recieved[1] * price < data[0].step + data[0].step &&
+                  recieved[1] * price > data[0].step
+                ) {
+                  callback(
+                    `<b>${ContractName} Buy</b>\n${data[0].emoji}${
+                      data[0].emoji
+                    }\n<b>Spent</b>: ${(recieved[1] * price).toPrecision(
+                      4
+                    )} USD \n<b>Got</b>: ${recieved[1]} ${
+                      recieved[2]
+                    }\n<b>Buyer ETH Value</b>: ${(balance / 10 ** 18).toFixed(
+                      7
+                    )} \n<b>Buyer Position</b>: N\A\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${price} \n<b>MCap</b>: $ ${(
+                      price * total_supply
+                    ).toFixed(
+                      4
+                    )}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${hash}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
+                      data[0].telegram
+                    }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
+                  );
+                } else if (
+                  recieved[1] * price > data[0].step + data[0].step &&
+                  recieved[1] * price <
+                    data[0].step + data[0].step + data[0].step
+                ) {
+                  callback(
+                    `<b>${ContractName} Buy</b>\n${data[0].emoji}${
+                      data[0].emoji
+                    }${data[0].emoji}\n<b>Spent</b>: ${(
+                      recieved[1] * price
+                    ).toPrecision(4)} USD \n<b>Got</b>: ${recieved[1]} ${
+                      recieved[2]
+                    }\n<b>Buyer ETH Value</b>: ${(balance / 10 ** 18).toFixed(
+                      7
+                    )} \n<b>Buyer Position</b>: N\A\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${price} \n<b>MCap</b>: $ ${(
+                      price * total_supply
+                    ).toFixed(
+                      4
+                    )}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${hash}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
+                      data[0].telegram
+                    }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
+                  );
+                } else {
+                  callback(
+                    `<b>${ContractName} Buy</b>\n${data[0].emoji}${
+                      data[0].emoji
+                    }${data[0].emoji}${data[0].emoji}${
+                      data[0].emoji
+                    }\n<b>Spent</b>: ${(recieved[1] * price).toPrecision(
+                      4
+                    )} USD \n<b>Got</b>: ${recieved[1]} ${
+                      recieved[2]
+                    }\n<b>Buyer ETH Value</b>: ${(balance / 10 ** 18).toFixed(
+                      7
+                    )} \n<b>Buyer Position</b>: N\A\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${price} \n<b>MCap</b>: $ ${(
+                      price * total_supply
+                    ).toFixed(
+                      4
+                    )}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${hash}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
+                      data[0].telegram
+                    }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
+                  );
                 }
-                console.log(data[0].step + data[0].step);
               }
             });
           } else {
