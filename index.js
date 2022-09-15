@@ -42,7 +42,7 @@ bot.use(function (ctx, next) {
     .then((_) => next(ctx));
 });
 
-bot.start((ctx) => ctx.reply(`Deep link Payload:${ctx.startPayload}`));
+// bot.start((ctx) => ctx.reply(`Deep link Payload:${ctx.startPayload}`));
 
 //Token add and Database Save
 
