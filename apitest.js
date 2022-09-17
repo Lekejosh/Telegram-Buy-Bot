@@ -9,7 +9,7 @@ const vue = axios.get(
 
 axios.all([res, vue]).then(
   axios.spread((...responses) => {
-    const { sent } = responses[0].data.transactions[1];
+    const { sent } = responses[0].data.transactions[0];
     let value1 = Number(sent[0].value);
     let value2 = Number(sent[1].value);
     sum = value1 + value2;
@@ -17,7 +17,7 @@ axios.all([res, vue]).then(
     if (sent.length === 2) {
       console.log("positive");
       console.log(sent);
-      console.log(sum.toLocaleString('fullwide', {useGrouping:false}));
+      console.log(sum.toLocaleString("fullwide", { useGrouping: false }));
     } else {
       console.log("Fuck Off");
       console.log(sent);
