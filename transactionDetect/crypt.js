@@ -22,7 +22,7 @@ class transaction {
       );
 
       const coun = await axios.get(
-        `https://api.unmarshal.com/v1/ethereum/address/${res.data.transactions[0].from}/transactions/count?auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
+        `https://api.unmarshal.com/v2/ethereum/address/${res.data.transactions[0].from}/transactions?page=1&pageSize=5&contract=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF&auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
       );
       const priceS = await axios.get(
         `https://api.unmarshal.com/v1/pricestore/chain/ethereum/0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF?timestamp=${vall.data.transactions[0].date}&auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
@@ -50,7 +50,7 @@ class transaction {
 
           const { balance, quote } = ethBal;
 
-          const { total_transaction_count } = responses[4]?.data || {};
+          const { total_txs } = responses[4]?.data || {};
           const { price } = responses[5]?.data;
           let priceNum = Number(price);
           console.log(price);
@@ -104,7 +104,7 @@ class transaction {
                       {
                         useGrouping: false,
                       }
-                    )} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${priceNum.toFixed(
+                    )} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                       12
                     )} \n<b>MCap</b>: $ ${(price * total_supply).toFixed(
                       4
@@ -125,7 +125,7 @@ class transaction {
                       }
                     )} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
                       2
-                    )}% ⬆ \n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${priceNum.toFixed(
+                    )}% ⬆ \n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                       12
                     )} \n<b>MCap</b>: $ ${(price * total_supply).toFixed(
                       4
@@ -146,7 +146,7 @@ class transaction {
                       }
                     )} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
                       2
-                    )}% ⬇\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${priceNum.toFixed(
+                    )}% ⬇\n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                       12
                     )} \n<b>MCap</b>: $ ${(price * total_supply).toFixed(
                       4
@@ -155,84 +155,6 @@ class transaction {
                     }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
                   );
                 }
-                // } else if (
-                //   sum * price < data[0].step + data[0].step &&
-                //   sum * price > data[0].step
-                // ) {
-                //   callback(
-                //     `<b>${ContractName} Buy</b>\n${data[0].emoji}${
-                //       data[0].emoji
-                //     }\n<b>Spent</b>: ${(sum * price).toLocaleString(
-                //       "fullwide",
-                //       {
-                //         useGrouping: false,
-                //       }
-                //     )} USD  \n<b>Got</b>:${sum.toLocaleString("fullwide", {
-                //       useGrouping: false,
-                //     })} ${
-                //       sent[0].symbol
-                //     }\n<b>Buyer ETH Value</b>:${walletVal} (${
-                //      quote
-                //     }) \n<b>Buyer Position</b>: N\A\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${price} \n<b>MCap</b>: $ ${(
-                //       price * total_supply
-                //     ).toFixed(
-                //       4
-                //     )}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
-                //       data[0].telegram
-                //     }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
-                //   );
-                // } else if (
-                //   sum * price > data[0].step + data[0].step &&
-                //   sum * price < data[0].step + data[0].step + data[0].step
-                // ) {
-                //   callback(
-                //     `<b>${ContractName} Buy</b>\n${data[0].emoji}${
-                //       data[0].emoji
-                //     }${data[0].emoji}\n<b>Spent</b>: ${(
-                //       recieved[1] * price
-                //     ).toPrecision(4)} USD \n<b>Got</b>: ${sum.toLocaleString(
-                //       "fullwide",
-                //       {
-                //         useGrouping: false,
-                //       }
-                //     )} ${
-                //       sent[0].symbol
-                //     }\n<b>Buyer ETH Value</b>:${walletVal} (${
-                //      quote
-                //     }) \n<b>Buyer Position</b>: N\A\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${price} \n<b>MCap</b>: $ ${(
-                //       price * total_supply
-                //     ).toFixed(
-                //       4
-                //     )}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
-                //       data[0].telegram
-                //     }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
-                //   );
-                // } else {
-                //   callback(
-                //     `<b>${ContractName} Buy</b>\n${data[0].emoji}${
-                //       data[0].emoji
-                //     }${data[0].emoji}${data[0].emoji}${
-                //       data[0].emoji
-                //     }\n<b>Spent</b>: ${(sum * price).toLocaleString(
-                //       "fullwide",
-                //       {
-                //         useGrouping: false,
-                //       }
-                //     )} USD  \n<b>Got</b>: ${sum.toLocaleString("fullwide", {
-                //       useGrouping: false,
-                //     })} ${
-                //       sent[0].symbol
-                //     }\n<b>Buyer ETH Value</b>:${walletVal} (${
-                //      quote
-                //     }) \n<b>Buyer Position</b>: N\A\n<b>Buy # </b>:${total_transaction_count}\n<b>Price</b>:$${price} \n<b>MCap</b>: $ ${(
-                //       price * total_supply
-                //     ).toFixed(
-                //       4
-                //     )}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
-                //       data[0].telegram
-                //     }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
-                //   );
-                // }
               }
             });
           } else {
