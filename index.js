@@ -13,33 +13,35 @@ const bot = new Telegraf("5561811963:AAFV83oL535KmiZOHwkSIybgiwmoCAxUCxQ");
 const instance = new Robot(bot);
 
 // Bot alert interval
-setInterval(async () => {
-  try {
-    instance.watchChanges();
-  } catch (error) {
-    console.error(error);
-    return;
-  }
-}, 8000);
+// setInterval(async () => {
+//   try {
+//     instance.watchChanges();
+//   } catch (error) {
+//     console.error(error);
+//     return;
+//   }
+// }, 8000);
 
 // Session start
 
 bot.use(function (ctx, next) {
-  console.log(ctx.startPayload);
-
-  if (ctx.chat.id > 0) return next();
-  return bot.telegram
-    .getChatAdministrators(ctx.chat.id)
-    .then(function (data) {
-      if (!data || !data.length) return;
-      console.log("admin list:", data);
-      ctx.chat._admins = data;
-      ctx.from._is_in_admin_list = data.some(
-        (adm) => adm.user.id === ctx.from.id
-      );
-    })
-    .catch(console.log)
-    .then((_) => next(ctx));
+  if (ctx.chat.id > 0) {
+    ctx.reply("Add to group");
+    next();
+  } else {
+    return bot.telegram
+      .getChatAdministrators(ctx.chat.id)
+      .then(function (data) {
+        if (!data || !data.length) return;
+        console.log("admin list:", data);
+        ctx.chat._admins = data;
+        ctx.from._is_in_admin_list = data.some(
+          (adm) => adm.user.id === ctx.from.id
+        );
+      })
+      .catch(console.log)
+      .then((_) => next(ctx));
+  }
 });
 
 // bot.start((ctx) => ctx.reply(`Deep link Payload:${ctx.startPayload}`));
@@ -139,34 +141,40 @@ bot.action("add", function (ctx) {
 // Settings
 
 bot.command("settings", function (ctx) {
+  const chatId = ctx.chat.id;
   if (ctx.from._is_in_admin_list) {
-    const chatId = ctx.chat.id;
     User.find({ chatId }, (error, data) => {
       if (error) {
         console.log(err);
       } else {
-        console.log(data[0].ethAddress);
-        if (data[0].ethAddress[0] == null) {
-          ctx.reply("No token avaliable");
+        if (data.chatId == undefined) {
+          ctx.reply(
+            "User not found... Please Register this group Using /addtoken "
+          );
         } else {
-          bot.telegram.sendMessage(ctx.chat.id, text.setting, {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: `${data[0].ethAddress[0].name}`,
-                    callback_data: "tsetting",
-                  },
+          console.log(data[0].ethAddress);
+          if (data[0].ethAddress[0] == null) {
+            ctx.reply("No token avaliable");
+          } else {
+            bot.telegram.sendMessage(ctx.chat.id, text.setting, {
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    {
+                      text: `${data[0].ethAddress[0].name}`,
+                      callback_data: "tsetting",
+                    },
+                  ],
+                  [
+                    {
+                      text: `>>cancel`,
+                      callback_data: "cancel",
+                    },
+                  ],
                 ],
-                [
-                  {
-                    text: `>>cancel`,
-                    callback_data: "cancel",
-                  },
-                ],
-              ],
-            },
-          });
+              },
+            });
+          }
         }
       }
     });
