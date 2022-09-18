@@ -87,9 +87,7 @@ class transaction {
               let value1 = Number(sent[0].value);
               let value2 = Number(sent[1].value);
               let sum = value1 / 10 ** 18 + value2 / 10 ** 18;
-              let realSum = sum.toLocaleString("fullwide", {
-                useGrouping: false,
-              });
+              let realSum = sum.toLocaleString("fullwide");
               let spentUsd = (sum * price).toLocaleString("fullwide", {
                 useGrouping: false,
               });
@@ -98,11 +96,13 @@ class transaction {
               let walletVal = balance / 10 ** 18;
               let ethWalletVal = walletVal.toFixed(5);
               let spentEth = (spentUsd / ethValue).toFixed(5);
+              let mcap = price * total_supply;
+              let mcapSum = Number(mcap).toLocaleString("fullwide");
+              let mcapfin = mcapSum
 
               User.find((error, data) => {
                 if (error) {
                   console.log(error);
-                } else {
                   let buyerPOS = (buyerBalCon / realSum) * 100;
                   // if (sum * price <= data[0].step) {
                   if ((buyerPOS = 100)) {
@@ -118,9 +118,7 @@ class transaction {
                         }
                       )} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                         12
-                      )} \n<b>MCap</b>: $ ${(price * total_supply).toFixed(
-                        4
-                      )}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
+                      )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
                         data[0].telegram
                       }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
                     );
@@ -139,9 +137,7 @@ class transaction {
                         2
                       )}% ⬆ \n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                         12
-                      )} \n<b>MCap</b>: $ ${(price * total_supply).toFixed(
-                        4
-                      )}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
+                      )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
                         data[0].telegram
                       }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
                     );
@@ -160,9 +156,7 @@ class transaction {
                         2
                       )}% ⬇\n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                         12
-                      )} \n<b>MCap</b>: $ ${(price * total_supply).toFixed(
-                        4
-                      )}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
+                      )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
                         data[0].telegram
                       }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
                     );
