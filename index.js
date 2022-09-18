@@ -26,7 +26,10 @@ const instance = new Robot(bot);
 
 bot.use(function (ctx, next) {
   if (ctx.chat.id > 0) {
-    ctx.reply("Add to group");
+    bot.telegram.sendMessage(ctx.chat.id, text.chatStart, {
+      parse_mode: "HTML",
+      disable_web_page_preview: true,
+    });
     next();
   } else {
     return bot.telegram
