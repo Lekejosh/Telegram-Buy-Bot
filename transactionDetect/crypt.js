@@ -98,7 +98,7 @@ class transaction {
               let spentEth = (spentUsd / ethValue).toFixed(5);
               let mcap = price * total_supply;
               let mcapSum = Number(mcap).toLocaleString("fullwide");
-              let mcapfin = mcapSum
+              let mcapfin = mcapSum;
 
               User.find((error, data) => {
                 if (error) {

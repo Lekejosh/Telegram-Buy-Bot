@@ -1,5 +1,29 @@
 //Apis
 
+const User = require("../userModel");
+
+// var add = (function address() {
+//   for(let i = 0; i <User.length;i++) {
+//     User.find((error,data)=>{
+//       if(error){
+//         console.log("error from balance.js")
+//         return error
+//       }else{
+// for (let j = 0; j < data[i]?.ethAddress?.length; j++) {
+            
+//             let res = data[i]?.ethAddress[j]?.token_Address
+//             return res;
+//           }
+//       }
+//     })
+//   }
+// })
+// ()
+
+
+
+//0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF
+
 const services = {
   balance: `https://api.etherscan.io/api?module=account&sort=desc&apikey=112R9MIZ97GI3M7UBVNAR34HYIGEW4RK8W&action=txlist&address=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF`,
   contractN: `https://api.etherscan.io/api?module=contract&action=getsourcecode&apikey=112R9MIZ97GI3M7UBVNAR34HYIGEW4RK8W&address=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF`,
