@@ -81,22 +81,30 @@ class transaction {
 
                 const ethValue = responses[7].data.data[0].quote.USD.price;
 
-                console.log(date);
                 const buyerBal = responses[8].data.result;
 
                 // Sending ALert details
                 this.transaction.lastValue = user[i].timeStamp;
                 if (sent.length === 2 && received.length === 1) {
-                 
-                  if (this.transaction.unit == date) {
+                  if (this.transaction.unit == user[i].timeStamp) {
                     return;
                   }
+                  let chhat = user[i].chatId;
+                  console.log(date);
                   User.findOneAndUpdate(
-                    user[i].chatId,
-                    `{
-                    timeStamp: ${date},
-                  }`
+                    { chhat },
+                    {
+                      timeStamp: `${date}`,
+                    },
+                    (error, data) => {
+                      if (error) {
+                        console.log("error saving");
+                      } else {
+                        console.log("Data=>", data);
+                      }
+                    }
                   );
+
                   let value1 = Number(sent[0].value);
                   let value2 = Number(sent[1].value);
                   let sum = value1 / 10 ** 18 + value2 / 10 ** 18;
@@ -185,8 +193,8 @@ class transaction {
                 console.log("I dey here");
                 console.log(user[i].chatId);
                 console.log(date);
-               
-                this.transaction.unit = date;
+
+                this.transaction.unit = user[i].timeStamp
               })
             );
         }
