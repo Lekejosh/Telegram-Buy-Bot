@@ -64,7 +64,7 @@ bot.command("addtoken", (ctx, next) => {
           cSupply: "100000000000000000",
           emoji: "Not Set",
           mEnable: false,
-          pairAddress: "not set",
+
           mImage: "Not Set",
           timeStamp: "0000000",
         }).then((neww) => {
@@ -473,14 +473,16 @@ const tokenVerify = new WizardScene(
     verifyToken
       .validateToken(tokenAddress)
       .then((res) => {
-        const { status, result } = res.data;
+        console.log(res.data)
+        const { pairs } = res.data;
+    
 
-        if (result[0].ContractName == "" || status == 0) {
+        if (pairs.length === 0 || pairs[0].chainId !== "ethereum") {
           ctx.reply("Address is not valid");
         } else {
           var chatId = ctx.chat.id;
           User.findOne({
-            "ethAddress.name": result[0].ContractName,
+            "ethAddress.name": pairs[0].baseToken.name,
           }).then((user) => {
             if (user) {
               ctx.reply("Address already exists");
@@ -492,8 +494,9 @@ const tokenVerify = new WizardScene(
                 {
                   $push: {
                     ethAddress: {
-                      name: result[0].ContractName,
-                      token_Address: tokenAddress,
+                      name: pairs[0].baseToken.name,
+                      token_Address: pairs[0].baseToken.address,
+                      pair_Address: pairs[0].pairAddress,
                     },
                   },
                 }
@@ -508,7 +511,7 @@ const tokenVerify = new WizardScene(
                     inline_keyboard: [
                       [
                         {
-                          text: `${result[0].ContractName}`,
+                          text: `${pairs[0].baseToken.symbol}/${pairs[0].quoteToken.symbol}`,
                           callback_data: "setting",
                         },
                       ],

@@ -25,7 +25,7 @@ class transaction {
           );
 
           const vall = await axios.get(
-            `https://api.unmarshal.com/v2/ethereum/address/${user[i].pairAddress}/transactions?page=1&pageSize=10&contract=string&auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
+            `https://api.unmarshal.com/v2/ethereum/address/${user[i].ethAddress[j].pair_Address}/transactions?page=1&pageSize=10&contract=string&auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
           );
           const val = await axios.get(
             `https://api.unmarshal.com/v1/ethereum/address/${res.data.transactions[0].from}/assets?verified=true&chainId=false&token=false&auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
@@ -91,7 +91,7 @@ class transaction {
                 // Sending ALert details
                 // this.transaction.lastValue = user[i].timeStamp;
                 if (sent.length === 2 && received.length === 1) {
-                  if (user[i].timeStamp == date) {
+                  if (user[i].timeStamp === date) {
                     return;
                   } else {
                     let chatId = user[i].chatId;
@@ -138,7 +138,7 @@ class transaction {
                         let buyerPOS = (buyerBalCon / realSum) * 100;
                         // if (sum * price <= data[0].step) {
                         if ((buyerPOS = 100)) {
-                          console.log("100, 1000");
+                    
                           callback(
                             `<b>${ContractName} Buy</b>\n${
                               data[0].emoji
@@ -209,10 +209,12 @@ class transaction {
               })
             );
         }
+       
       }
     } catch (error) {
       console.log(error);
     }
+    
   }
 }
 
