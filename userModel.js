@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
   cSupply: { type: Number },
   emoji: { type: String },
   mEnable: { type: Boolean },
+  pairAddress:{type: String},
   mImage: {
     data: Buffer,
     contentType: String,

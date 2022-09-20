@@ -64,6 +64,7 @@ bot.command("addtoken", (ctx, next) => {
           cSupply: "100000000000000000",
           emoji: "Not Set",
           mEnable: false,
+          pairAddress: "not set",
           mImage: "Not Set",
           timeStamp: "0000000",
         }).then((neww) => {
