@@ -150,7 +150,7 @@ bot.command("settings", function (ctx) {
       if (error) {
         console.log(err);
       } else {
-        if (data.chatId == undefined) {
+        if (!data[0]?.chatId) {
           ctx.reply(
             "User not found... Please Register this group Using /addtoken "
           );
