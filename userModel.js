@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
     data: Buffer,
     contentType: String,
   },
+  timeStamp:{type: Number}
 });
 const User = mongoose.model("user", userSchema);
 

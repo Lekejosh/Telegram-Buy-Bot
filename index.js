@@ -13,14 +13,14 @@ const bot = new Telegraf("5561811963:AAFV83oL535KmiZOHwkSIybgiwmoCAxUCxQ");
 const instance = new Robot(bot);
 
 // Bot alert interval
-// setInterval(async () => {
-//   try {
-//     instance.watchChanges();
-//   } catch (error) {
-//     console.error(error);
-//     return;
-//   }
-// }, 8000);
+setInterval(async () => {
+  try {
+    instance.watchChanges();
+  } catch (error) {
+    console.error(error);
+    return;
+  }
+}, 8000);
 
 // Session start
 
@@ -65,6 +65,7 @@ bot.command("addtoken", (ctx, next) => {
           emoji: "Not Set",
           mEnable: false,
           mImage: "Not Set",
+          timeStamp: "0000000",
         }).then((neww) => {
           console.log(neww);
         });
