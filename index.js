@@ -1,4 +1,5 @@
 const Telegraf = require("telegraf");
+
 const mongoose = require("mongoose");
 const { session } = require("telegraf-session-mongoose");
 const text = require("./text.json");
@@ -7,8 +8,12 @@ const User = require("./userModel");
 const Stage = require("telegraf/stage");
 // Transaction Robot
 const Robot = require("./transactionDetect/bot");
+const upload = require("./upload")
+const { Scenes, Composer } = require("telegraf");
 const WizardScene = require("telegraf/scenes/wizard");
 const bot = new Telegraf("5561811963:AAFV83oL535KmiZOHwkSIybgiwmoCAxUCxQ");
+const imageScene = require("./scenes/imageScene.js").
+imageScene;
 // //Transaction RObot Instance
 const instance = new Robot(bot);
 
@@ -48,6 +53,11 @@ bot.use(function (ctx, next) {
 });
 
 // bot.start((ctx) => ctx.reply(`Deep link Payload:${ctx.startPayload}`));
+
+// bot.command("image", (ctx) =>
+//   ctx.replyWithPhoto({ source: "./ggg.png" })
+// );
+
 
 //Token add and Database Save
 
@@ -299,7 +309,7 @@ bot.action("tsetting", function (ctx) {
         };
         bot.telegram.sendMessage(
           ctx.chat.id,
-          `Successfully added Token Name: ${data[0].ethAddress[0].name}  to ${ctx.chat.title}.\nPlease update each of the settings below to suit your needs. If you want to change any, simply\nclick on the applicable button.\nToken Name: ${data[0].ethAddress[0].name} \nToken Address:${data[0].ethAddress[0].token_Address} \nPair Address:`,
+          `Successfully added Token Name: ${data[0].ethAddress[0].name}  to ${ctx.chat.title}.\nPlease update each of the settings below to suit your needs. If you want to change any, simply\nclick on the applicable button.\nToken Name: ${data[0].ethAddress[0].name} \nToken Address:${data[0].ethAddress[0].token_Address} \nPair Address:${data[0].ethAddress[0].pair_Address}`,
           set
         );
       } else {
@@ -473,9 +483,8 @@ const tokenVerify = new WizardScene(
     verifyToken
       .validateToken(tokenAddress)
       .then((res) => {
-        console.log(res.data)
+        console.log(res.data);
         const { pairs } = res.data;
-    
 
         if (pairs.length === 0 || pairs[0].chainId !== "ethereum") {
           ctx.reply("Address is not valid");
@@ -511,7 +520,7 @@ const tokenVerify = new WizardScene(
                     inline_keyboard: [
                       [
                         {
-                          text: `${pairs[0].baseToken.symbol}/${pairs[0].quoteToken.symbol}`,
+                          text: `${pairs[0].baseToken.symbol}/${pairs[0].quoteToken.symbol} \n ${pairs[0].baseToken.address}`,
                           callback_data: "setting",
                         },
                       ],
@@ -568,47 +577,64 @@ const telegramLink = new WizardScene(
   }
 );
 
-const mImage = new WizardScene(
-  "mediaImage",
-  (ctx) => {
-    ctx.reply(`Please send your transaction Image`);
-    ctx.wizard.state.data = {};
-    return ctx.wizard.next();
-  },
-  (ctx) => {
-    ctx.wizard.state.data.image = ctx.update.message.photo;
-    let photos = ctx.wizard.state.data.image;
-    const { file_id: fileId } = photos[photos.length - 1];
-    const fileUrl = ctx.telegram.getFileLink(fileId);
-    let buffer = fileManager.getBuffer(fileUrl);
+// const mImage = new WizardScene(
+//   "mediaImage",
+//   (ctx) => {
+//     ctx.reply(`Please send your transaction Image`);
+//         ctx.wizard.state.data = {};
 
-    console.log(buffer);
-    // const chatId = ctx.chat.id;
-    // const user = User.findOneAndUpdate(
-    //   { chatId },
-    //   { mImage: `${mmImage}` },
-    //   (error, data) => {
-    //     if (error) {
-    //       ctx.reply("Not valid");
-    //     } else {
-    //       bot.telegram.sendMessage(ctx.chat.id, `Saved Successfully`, {
-    //         reply_markup: {
-    //           inline_keyboard: [
-    //             [
-    //               {
-    //                 text: `>>Back`,
-    //                 callback_data: "tsetting",
-    //               },
-    //             ],
-    //           ],
-    //         },
-    //       });
-    //     }
-    //   }
-    // );
-    return ctx.scene.leave();
-  }
-);
+//     return ctx.wizard.next();
+//   },
+//   bot.on("message",upload.single('image'), (ctx) => {
+//     ctx.reply("I have received the image please wait while i extract the text");
+//     // let photos = ctx.message.document.file_name;
+//     const chatId = ctx.chat.id;
+    
+//    const { file_id: fileId } = photos;
+//   const { file_unique_id: fileUniqueId } = photos;
+//   const fileUrl = ctx.telegram.getFileLink(fileId);
+//   const obj = {
+//     img: {
+//       data: fs.createWriteStream(
+//         path.join(__dirname + "/uploads/" + ctx.message.document.file_name)
+//       ),
+//       contentType: "image/png",
+//     },
+//   };
+//    console.log(fileUrl)
+//     User.findOneAndUpdate(
+//       { chatId },
+//       { obj},
+//       (error, data) => {
+//         if (error) {
+//           ctx.reply("Not valid");
+//         } else {
+//           ctx.reply("Uploaded")
+//         }
+//   //  ctx.telegram.getFileLink(fileId).then(url => {    
+//   //   axios({url, responseType: 'stream'}).then(response => {
+//   //       return new Promise((resolve, reject) => {
+//   //           response.data.pipe(fs.createWriteStream(`./${ctx.message.document.file_name}`))
+//   //                       // .on('finish', () => /* File is saved. */)
+//   //                       // .on('error', e => /* An error has occured */)
+//   //               });
+//   //           })
+// })
+//     // const chatId = ctx.chat.id;
+//     // const user = User.findOneAndUpdate(
+//     //   { chatId },
+//     //   { mImage: `${mmImage}` },
+//     //   (error, data) => {
+//     //     if (error) {
+//     //       ctx.reply("Not valid");
+//     //     } else {
+//     // bot.telegram.sendMessage(ctx.chat.id, ctx.replyWithPhoto(photos));
+//     //     }
+//     //   }
+//     // );
+//     return ctx.scene.leave();
+//   })
+// );
 
 const Step = new WizardScene(
   "step",
@@ -771,13 +797,15 @@ const stage = new Stage([
   Csupply,
   Emoji,
   Media,
-  mImage,
+imageScene,
+// mImage
 ]);
 
 bot.use(session());
 bot.use(stage.middleware());
 
 //ETHList action
+
 bot.action(ethList, Stage.enter("token"));
 bot.action("updateTele", (ctx) => {
   Stage.enter("updateTele")(ctx);
@@ -791,24 +819,25 @@ bot.action("cSupply", (ctx) => {
 bot.action("emoji", (ctx) => {
   Stage.enter("emoji")(ctx);
 });
+bot.action("mImages", Stage.enter("imageScene"));
 bot.action("menable", (ctx) => {
   Stage.enter("menable")(ctx);
 });
-bot.action("mImages", (ctx) => {
-  chatId = ctx.chat.id;
-  User.find({ chatId }, (error, data) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(data[0].mEnable);
-      if (data[0].mEnable == false) {
-        ctx.reply("Media is not enabled... Enable in settings");
-      } else {
-        Stage.enter("mediaImage")(ctx);
-      }
-    }
-  });
-});
+// bot.action("mImages", (ctx) => {
+//   chatId = ctx.chat.id;
+//   User.find({ chatId }, (error, data) => {
+//     if (error) {
+//       console.log(error);
+//     } else {
+//       console.log(data[0].mEnable);
+//       if (data[0].mEnable == false) {
+//         ctx.reply("Media is not enabled... Enable in settings");
+//       } else {
+//         Stage.enter("mediaImage")(ctx);
+//       }
+//     }
+//   });
+// });
 
 // Cancel Action
 bot.action("cancel", (ctx) => {

@@ -16,8 +16,7 @@ class Bot {
   // Send Alert message
 
   sendMessages(message) {
-    console.log(message.spent)
-            this.bot.telegram.sendMessage(-642792299, message, {
+            this.bot.telegram.sendMessage(-685910650, message, {
               parse_mode: "HTML",
               disable_web_page_preview: true,
             });
