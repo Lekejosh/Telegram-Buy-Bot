@@ -8,10 +8,7 @@ const userSchema = new mongoose.Schema({
   cSupply: { type: Number },
   emoji: { type: String },
   mEnable: { type: Boolean },
-  mImage: {
-    data: Buffer,
-    contentType: String,
-  },
+  mImage: {type: String},
   timeStamp:{type: Number}
 });
 const User = mongoose.model("user", userSchema);

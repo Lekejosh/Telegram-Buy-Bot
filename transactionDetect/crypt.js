@@ -138,10 +138,10 @@ class transaction {
                         let buyerPOS = (buyerBalCon / realSum) * 100;
                         // if (sum * price <= data[0].step) {
                         if ((buyerPOS = 100)) {
-                    
                           callback(
-                            `<b>${ContractName} Buy</b>\n${
-                              data[0].emoji
+                            ` 
+                            <b>${ContractName} Buy</b>\n${
+                              data[i].emoji
                             }\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
                               sent[0].symbol
                             }\n<b>Buyer ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
@@ -152,14 +152,15 @@ class transaction {
                             )} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                               12
                             )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
-                              data[0].telegram
+                              data[i].telegram
                             }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
                           );
                         } else if (buyerPOS > 50) {
                           console.log("else if ...");
                           callback(
-                            `<b>${ContractName} Buy</b>\n${
-                              data[0].emoji
+                            `
+                            <b>${ContractName} Buy</b>\n${
+                              data[i].emoji
                             }\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH)\n<b>Got</b>: ${realSum} ${
                               sent[0].symbol
                             }\n<b>Buyer ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
@@ -172,14 +173,15 @@ class transaction {
                             )}% ⬆ \n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                               12
                             )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
-                              data[0].telegram
+                              data[i].telegram
                             }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
                           );
                         } else {
                           console.log("Fuck this");
                           callback(
-                            `<b>${ContractName} Buy</b>\n${
-                              data[0].emoji
+                            `
+                            <b>${ContractName} Buy</b>\n${
+                              data[i].emoji
                             }\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
                               sent[0].symbol
                             }\n<b>Buyer ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
@@ -192,7 +194,7 @@ class transaction {
                             )}% ⬇\n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                               12
                             )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
-                              data[0].telegram
+                              data[i].telegram
                             }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
                           );
                         }
@@ -209,15 +211,11 @@ class transaction {
               })
             );
         }
-       
       }
     } catch (error) {
       console.log(error);
     }
-    
   }
 }
-
-
 
 module.exports = transaction;
