@@ -3,6 +3,14 @@ const User = require("../userModel");
 
 const axios = require("axios");
 const services = require("./balance");
+const ID =[]
+const image = []
+const pair = []
+const token = []
+const Tname = []
+const Temoji = []
+const Tele =[]
+const Clock = []
 class transaction {
   // constructor() {
   //   this.transaction = {};
@@ -10,32 +18,40 @@ class transaction {
   // }
 
   //Get transaction details APIs
-
   async getTransaction(callback) {
-    try {
-      let user = await User.find();
-      for (let i = 0; i < user.length; i++) {
-        for (let j = 0; j < user[i].ethAddress.length; j++) {
-          console.log(user[i].ethAddress[j].token_Address);
+    let user = await User.find();
+    for (let i = 0; i < user.length; i++) {
+      for (let j = 0; j < user[i].ethAddress.length; j++) {
+      
+        ID.unshift(user[i].chatId);
+        image.unshift(user[i].mImage)
+        token.unshift(user[i].ethAddress[j].token_Address);
+        pair.unshift(user[i].ethAddress[j].pair_Address);
+        Tname.unshift(user[i].ethAddress[j].name);
+        Temoji.unshift(user[i].emoji);
+        Tele.unshift(user[i].telegram);
+        Clock.unshift(user[i].timeStamp);
+        }}
+        try {
           const res = await axios.get(
-            `https://api.unmarshal.com/v3/ethereum/address/${user[i].ethAddress[j].token_Address}/transactions?page=1&pageSize=5&contract=string&price=true&auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
+            `https://api.unmarshal.com/v3/ethereum/address/${token[0]}/transactions?page=1&pageSize=5&contract=string&price=true&auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
           );
           const con = await axios.get(
-            `https://api.etherscan.io/api?module=contract&action=getsourcecode&apikey=112R9MIZ97GI3M7UBVNAR34HYIGEW4RK8W&address=${user[i].ethAddress[j].token_Address}`
+            `https://api.etherscan.io/api?module=contract&action=getsourcecode&apikey=112R9MIZ97GI3M7UBVNAR34HYIGEW4RK8W&address=${token[0]}`
           );
 
           const vall = await axios.get(
-            `https://api.unmarshal.com/v2/ethereum/address/${user[i].ethAddress[j].pair_Address}/transactions?page=1&pageSize=10&contract=string&auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
+            `https://api.unmarshal.com/v2/ethereum/address/${pair[0]}/transactions?page=1&pageSize=10&contract=string&auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
           );
           const val = await axios.get(
             `https://api.unmarshal.com/v1/ethereum/address/${res.data.transactions[0].from}/assets?verified=true&chainId=false&token=false&auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
           );
 
           const coun = await axios.get(
-            `https://api.unmarshal.com/v2/ethereum/address/${res.data.transactions[0].from}/transactions?page=1&pageSize=5&contract=${user[i].ethAddress[j].token_Address}&auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
+            `https://api.unmarshal.com/v2/ethereum/address/${res.data.transactions[0].from}/transactions?page=1&pageSize=5&contract=${token[0]}&auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
           );
           const priceS = await axios.get(
-            `https://api.unmarshal.com/v1/pricestore/chain/ethereum/${user[i].ethAddress[j].token_Address}?timestamp=${vall.data.transactions[0].date}&auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
+            `https://api.unmarshal.com/v1/pricestore/chain/ethereum/${token[0]}?timestamp=${vall.data.transactions[0].date}&auth_key=xJ4Xs6Nbwx2EChON3PNFO26gJSpw6vEm9mg097IU`
           );
           const conversion = await axios.get(
             "https://pro-api.coinmarketcap.com/v2/tools/price-conversion?amount=1&symbol=ETH",
@@ -46,7 +62,7 @@ class transaction {
             }
           );
           const buyerTBalance = await axios.get(
-            `https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${user[i].ethAddress[j].token_Address}&address=${res.data.transactions[0].from}&tag=latest&apikey=112R9MIZ97GI3M7UBVNAR34HYIGEW4RK8W`
+            `https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${token[0]}&address=${res.data.transactions[0].from}&tag=latest&apikey=112R9MIZ97GI3M7UBVNAR34HYIGEW4RK8W`
           );
           const supplyS = await axios.get(services.supply);
           axios
@@ -91,14 +107,14 @@ class transaction {
                 // Sending ALert details
                 // this.transaction.lastValue = user[i].timeStamp;
                 if (sent.length === 2 && received.length === 1) {
-                  if (user[i].timeStamp === date) {
+                if (Clock[0] === date ) {
                     return;
                   } else {
-                    let chatId = user[i].chatId;
+                    let chatId = `${ID[0]}`;
                     console.log("Name the chat Id be this=>", chatId);
 
                     User.findOneAndUpdate(
-                      { chatId: `${user[i].chatId}` },
+                      { chatId },
                       {
                         timeStamp: `${date}`,
                       },
@@ -108,9 +124,8 @@ class transaction {
                         } else {
                           console.log(
                             "Na the name be this=>",
-                            user[i].ethAddress[j].name
+                            `${Tname[0]}`
                           );
-                          console.log("Data=>", data);
                         }
                       }
                     );
@@ -141,7 +156,7 @@ class transaction {
                           callback(
                             ` 
                             <b>${ContractName} Buy</b>\n${
-                              data[i].emoji
+                              Temoji[0]
                             }\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
                               sent[0].symbol
                             }\n<b>Buyer ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
@@ -152,7 +167,7 @@ class transaction {
                             )} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                               12
                             )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
-                              data[i].telegram
+                              Temoji[0]
                             }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
                           );
                         } else if (buyerPOS > 50) {
@@ -160,7 +175,7 @@ class transaction {
                           callback(
                             `
                             <b>${ContractName} Buy</b>\n${
-                              data[i].emoji
+                              Temoji[0]
                             }\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH)\n<b>Got</b>: ${realSum} ${
                               sent[0].symbol
                             }\n<b>Buyer ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
@@ -173,7 +188,7 @@ class transaction {
                             )}% ⬆ \n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                               12
                             )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
-                              data[i].telegram
+                              Tele[0]
                             }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
                           );
                         } else {
@@ -181,7 +196,7 @@ class transaction {
                           callback(
                             `
                             <b>${ContractName} Buy</b>\n${
-                              data[i].emoji
+                              Temoji[0]
                             }\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
                               sent[0].symbol
                             }\n<b>Buyer ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
@@ -194,7 +209,7 @@ class transaction {
                             )}% ⬇\n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                               12
                             )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: N\A\n<b>Token Rank</b>: N\A\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/"><b>Chart</b></a> |  <a href="${
-                              data[i].telegram
+                              Tele[0]
                             }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
                           );
                         }
@@ -207,15 +222,15 @@ class transaction {
                 // console.log(user[i].chatId);
                 console.log(date);
 
-                // this.transaction.unit = user[i].timeStamp;
+                // this.transaction.unit = Time[0]
               })
             );
+        } catch (error) {
+          console.log(error);
         }
-      }
-    } catch (error) {
-      console.log(error);
-    }
+      
+    
   }
 }
 
-module.exports = transaction;
+module.exports = {transaction, ID, image};

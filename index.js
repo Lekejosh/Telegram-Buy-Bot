@@ -27,7 +27,7 @@ setInterval(async () => {
     console.error(error);
     return;
   }
-}, 8000);
+}, 16000);
 
 // Session start
 

@@ -1,4 +1,8 @@
-const transaction = require("./crypt");
+const {
+  transaction,
+  ID,
+  image
+} = require("./crypt");
 
 const User = require("../userModel");
 
@@ -18,25 +22,25 @@ class Bot {
     let user = await User.find()
     
 
-    for(let i =0; i<user.length;i++){
-      console.log("chatId", user[i].chatId);
+ 
+      console.log("chatId", ID);
       if (
-        user[i].mImage == "Not set" ||
-        user[i].mImage == undefined ||
-        user[i].mImage == null
+        image[0] == "Not set" ||
+        image[0] == undefined ||
+        image[0] == null
       ) {
-        this.bot.telegram.sendMessage(-685910650, message, {
+        this.bot.telegram.sendMessage(id[0], message, {
           parse_mode: "HTML",
           disable_web_page_preview: true,
         });
       } else {
-        this.bot.telegram.sendPhoto(-685910650, `${user[i].mImage}`, {
+        this.bot.telegram.sendPhoto(ID[0], `${image[0]}`, {
           caption: message,
           parse_mode: "HTML",
           disable_web_page_preview: true,
         });
       }
-    }
+
   
   }
 
