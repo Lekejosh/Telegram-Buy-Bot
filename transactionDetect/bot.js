@@ -19,7 +19,6 @@ class Bot {
   // Send Alert message
 
   async sendMessages(message) {
-    let user = await User.find()
     
 
  

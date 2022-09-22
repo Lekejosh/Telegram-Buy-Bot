@@ -15,10 +15,6 @@ const bot = new Telegraf("5561811963:AAFV83oL535KmiZOHwkSIybgiwmoCAxUCxQ");
 const imageScene = require("./scenes/imageScene.js").imageScene;
 // //Transaction RObot Instance
 const instance = new Robot(bot);
-const bufferImage = require("buffer-image");
-const axios = require("axios");
-let superPath = "./[object Object].jpg";
-
 // Bot alert interval
 setInterval(async () => {
   try {
@@ -27,7 +23,7 @@ setInterval(async () => {
     console.error(error);
     return;
   }
-}, 16000);
+}, 25000);
 
 // Session start
 
@@ -132,23 +128,59 @@ bot.action("plus", function (ctx) {
 //Token Add function
 
 bot.action("add", function (ctx) {
+  const chatId = ctx.chat.id;
   if (ctx.from._is_in_admin_list) {
-    bot.telegram.sendMessage(
-      ctx.chat.id,
-      text.set + " " + `${ctx.chat.title}`,
-      {
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: "ETH",
-                callback_data: "eth",
+    User.find({ chatId }, (error, data) => {
+      if (error) {
+        console.log(err);
+      } else {
+        if (data[0].ethAddress.name == null || data[0].ethAddress.name == undefined) {
+          bot.telegram.sendMessage(
+            ctx.chat.id,
+            text.set + " " + `${ctx.chat.title}`,
+            {
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    {
+                      text: "ETH",
+                      callback_data: "eth",
+                    },
+                  ],
+                ],
               },
-            ],
-          ],
-        },
+            }
+          );
+        } else {
+          bot.telegram.sendMessage(
+            ctx.chat.id,
+            "Are you sure you want to change already Reqisterd Token?",
+            {
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    {
+                      text: "Yes",
+                      callback_data: "eth",
+                    },
+                    {
+                      text: "No",
+                      callback_data: "cancel",
+                    },
+                  ],
+                  [
+                    {
+                      text: "View Settings of Already Added Token",
+                      callback_data: "tsetting",
+                    },
+                  ],
+                ],
+              },
+            }
+          );
+        }
       }
-    );
+    });
   } else {
     return ctx.reply("Denied");
   }
@@ -169,7 +201,7 @@ bot.command("settings", function (ctx) {
           );
         } else {
           console.log(data[0].ethAddress);
-          if (data[0].ethAddress[0] == null) {
+          if (data[0].ethAddress == null) {
             ctx.reply("No token avaliable");
           } else {
             bot.telegram.sendMessage(ctx.chat.id, text.setting, {
@@ -177,7 +209,7 @@ bot.command("settings", function (ctx) {
                 inline_keyboard: [
                   [
                     {
-                      text: `${data[0].ethAddress[0].name}`,
+                      text: `${data[0].ethAddress.name}`,
                       callback_data: "tsetting",
                     },
                   ],
@@ -208,7 +240,7 @@ bot.action("setting", function (ctx) {
       } else {
         console.log(data[0].ethAddress);
         // }
-        if (data[0].ethAddress[0] == null) {
+        if (data[0].ethAddress == null) {
           ctx.reply(
             "No token Registered To this group... Trying adding a New token"
           );
@@ -218,7 +250,7 @@ bot.action("setting", function (ctx) {
               inline_keyboard: [
                 [
                   {
-                    text: `${data[0].ethAddress[0].name}`,
+                    text: `${data[0].ethAddress.name}`,
                     callback_data: "tsetting",
                   },
                 ],
@@ -310,7 +342,7 @@ bot.action("tsetting", function (ctx) {
         };
         bot.telegram.sendMessage(
           ctx.chat.id,
-          `Successfully added Token Name: ${data[0].ethAddress[0].name}  to ${ctx.chat.title}.\nPlease update each of the settings below to suit your needs. If you want to change any, simply\nclick on the applicable button.\nToken Name: ${data[0].ethAddress[0].name} \nToken Address:${data[0].ethAddress[0].token_Address} \nPair Address:${data[0].ethAddress[0].pair_Address}`,
+          `Successfully added Token Name: ${data[0].ethAddress.name}  to ${ctx.chat.title}.\nPlease update each of the settings below to suit your needs. If you want to change any, simply\nclick on the applicable button.\nToken Name: ${data[0].ethAddress.name} \nToken Address:${data[0].ethAddress.token_Address} \nPair Address:${data[0].ethAddress.pair_Address}`,
           set
         );
       } else {
@@ -330,42 +362,53 @@ bot.action("mImages", (ctx) => {
       if (data[0].mEnable == false) {
         ctx.reply("Media is not enabled... Enable in settings");
       } else {
-      bot.telegram.sendMessage(ctx.chat.id, "What do you want to do", {
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: "View Already Saved Image",
-                callback_data: `viewImage`,
-              },
+        bot.telegram.sendMessage(ctx.chat.id, "What do you want to do", {
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: "View Already Saved Image",
+                  callback_data: `viewImage`,
+                },
+              ],
+              [
+                {
+                  text: "Change Image",
+                  callback_data: `mImageChange`,
+                },
+              ],
             ],
-            [
-              {
-                text: "Change Image",
-                callback_data: `mImageChange`,
-              },
-            ],
-          ],
-        },
-      });
+          },
+        });
       }
     }
   });
 });
 
-bot.action("viewImage",(ctx)=>{
+bot.action("viewImage", (ctx) => {
   chatId = ctx.chat.id;
   User.find({ chatId }, (error, data) => {
     if (error) {
       console.log(error);
     } else {
-      bot.telegram.sendPhoto(ctx.chat.id,`${data[0].mImage}`,{"reply_markup":{"inline_keyboard":[[{"text":">>back","callback_data":"setting"}]]}})
+      if (data[0].mImage == "Not Set") {
+        bot.telegram.sendMessage(ctx.chat.id, `No Image Saved`, {
+          reply_markup: {
+            inline_keyboard: [[{ text: ">>back", callback_data: "tsetting" }]],
+          },
+        });
+      } else {
+        bot.telegram.sendPhoto(ctx.chat.id, `${data[0].mImage}`, {
+          reply_markup: {
+            inline_keyboard: [[{ text: ">>back", callback_data: "tsetting" }]],
+          },
+        });
+      }
     }
-  })
-})
+  });
+});
 
 // Telegram Link Update and Edit
-
 
 bot.action("tele", function (ctx) {
   if (ctx.from._is_in_admin_list) {
@@ -422,7 +465,7 @@ bot.action("tokenDelete", function (ctx) {
       ctx.reply("Error getting user");
     } else {
       console.log(data[0].ethAddress);
-      let toks = data[0].ethAddress[0];
+      let toks = data[0].ethAddress;
       User.findOneAndDelete(
         ctx.chat.id,
         {
@@ -547,12 +590,10 @@ const tokenVerify = new WizardScene(
               User.findOneAndUpdate(
                 { chatId },
                 {
-                  $push: {
-                    ethAddress: {
-                      name: pairs[0].baseToken.name,
-                      token_Address: pairs[0].baseToken.address,
-                      pair_Address: pairs[0].pairAddress,
-                    },
+                  ethAddress: {
+                    name: pairs[0].baseToken.name,
+                    token_Address: pairs[0].baseToken.address,
+                    pair_Address: pairs[0].pairAddress,
                   },
                 }
               ).then((neww) => {
@@ -566,8 +607,8 @@ const tokenVerify = new WizardScene(
                     inline_keyboard: [
                       [
                         {
-                          text: `${pairs[0].baseToken.symbol}/${pairs[0].quoteToken.symbol} \n ${pairs[0].baseToken.address}`,
-                          callback_data: "setting",
+                          text: `${pairs[0].baseToken.symbol}/${pairs[0].quoteToken.symbol} \n\n ${pairs[0].baseToken.address}`,
+                          callback_data: "tsetting",
                         },
                       ],
                     ],
@@ -844,7 +885,6 @@ bot.action("mImageChange", Stage.enter("imageScene"));
 bot.action("menable", (ctx) => {
   Stage.enter("menable")(ctx);
 });
-
 
 // Cancel Action
 bot.action("cancel", (ctx) => {
