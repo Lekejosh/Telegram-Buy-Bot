@@ -25,11 +25,11 @@ class Bot {
  
       console.log("chatId", ID);
       if (
-        image[0] == "Not set" ||
+        image[0] == "Not Set" ||
         image[0] == undefined ||
         image[0] == null
       ) {
-        this.bot.telegram.sendMessage(id[0], message, {
+        this.bot.telegram.sendMessage(ID[0], message, {
           parse_mode: "HTML",
           disable_web_page_preview: true,
         });
