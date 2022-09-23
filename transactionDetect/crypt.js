@@ -234,7 +234,7 @@ class transaction {
               }
               // console.log("I dey here");
               // console.log(user[i].chatId);
-              console.log(date);
+              
 
               // this.transaction.unit = Time[0]
             })

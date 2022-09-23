@@ -578,14 +578,6 @@ const tokenVerify = new WizardScene(
         if (pairs.length === 0 || pairs[0].chainId !== "ethereum") {
           ctx.reply("Address is not valid");
         } else {
-          var chatId = ctx.chat.id;
-          User.findOne({
-            "ethAddress.name": pairs[0].baseToken.name,
-          }).then((user) => {
-            if (user) {
-              ctx.reply("Address already exists");
-              next();
-            } else {
               var chatId = ctx.chat.id;
               User.findOneAndUpdate(
                 { chatId },
@@ -615,8 +607,8 @@ const tokenVerify = new WizardScene(
                   },
                 }
               );
-            }
-          });
+            
+          
         }
       })
       .catch((err) => ctx.reply(err.message));
