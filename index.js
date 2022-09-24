@@ -28,7 +28,7 @@ setInterval(async () => {
     console.error(error);
     return;
   }
-}, 25000)
+}, 35000)
 
 // Session start
 
@@ -226,6 +226,7 @@ bot.hears(/\/start(.*)/, (msg, match) => {
 //Token Add function
 
 bot.action("add", function (ctx) {
+  ctx.deleteMessage();
   User.find({ chatId: mainId[0] }, (error, data) => {
     if (error) {
       console.log(err);
@@ -284,7 +285,7 @@ bot.action("add", function (ctx) {
 
 // Settings
 bot.action("setting", function (ctx) {
- 
+ ctx.deleteMessage();
     User.find({ chatId: mainId[0] }, (error, data) => {
       if (error) {
         console.log(err);
@@ -324,6 +325,7 @@ bot.action("setting", function (ctx) {
 });
 
 bot.action("tsetting", function (ctx) {
+  ctx.deleteMessage();
   User.find({ chatId: mainId[0] }, (error, data) => {
     if (error) {
       console.log(error);
@@ -402,6 +404,7 @@ bot.action("tsetting", function (ctx) {
 });
 
 bot.action("mImages", (ctx) => {
+  ctx.deleteMessage();
   chatId = ctx.chat.id;
   User.find({ chatId }, (error, data) => {
     if (error) {
@@ -435,6 +438,7 @@ bot.action("mImages", (ctx) => {
 });
 
 bot.action("viewImage", (ctx) => {
+  ctx.deleteMessage();
   chatId = ctx.chat.id;
   User.find({ chatId }, (error, data) => {
     if (error) {
@@ -460,7 +464,7 @@ bot.action("viewImage", (ctx) => {
 // Telegram Link Update and Edit
 
 bot.action("tele", function (ctx) {
- 
+ ctx.deleteMessage();
     const chatId = ctx.chat.id;
     User.find({ chatId }, (error, data) => {
       if (error) {
@@ -490,6 +494,7 @@ bot.action("tele", function (ctx) {
 });
 
 bot.action("currentLink", (ctx) => {
+  ctx.deleteMessage();
   chatId = ctx.chat.id;
   User.find({ chatId }, (error, data) => {
     if (error) {
@@ -506,6 +511,7 @@ bot.action("currentLink", (ctx) => {
 
 //Token Delete
 bot.action("tokenDelete", function (ctx) {
+  ctx.deleteMessage();
   const chatId = ctx.chat.id;
   User.find({ chatId }, (error, data) => {
     if (error) {
@@ -533,7 +539,7 @@ bot.action("tokenDelete", function (ctx) {
 //ETH  Scene
 
 bot.action("eth", function (ctx) {
-
+ctx.deleteMessage();
     bot.telegram.sendMessage(ctx.chat.id, text.token, {
       reply_markup: {
         inline_keyboard: [
@@ -903,19 +909,24 @@ bot.use(stage.middleware());
 
 bot.action(ethList, Stage.enter("token"));
 bot.action("updateTele", (ctx) => {
+  ctx.deleteMessage();
   Stage.enter("updateTele")(ctx);
 });
 bot.action("step", (ctx) => {
+  ctx.deleteMessage();
   Stage.enter("step")(ctx);
 });
 bot.action("cSupply", (ctx) => {
+  ctx.deleteMessage();
   Stage.enter("cSupply")(ctx);
 });
 bot.action("emoji", (ctx) => {
+  ctx.deleteMessage();
   Stage.enter("emoji")(ctx);
 });
 bot.action("mImageChange", Stage.enter("imageScene"));
 bot.action("menable", (ctx) => {
+  ctx.deleteMessage();
   Stage.enter("menable")(ctx);
 });
 
@@ -926,6 +937,8 @@ bot.action("cancel", (ctx) => {
 
 //Save Token
 bot.action("save", (ctx) => {
+
+  ctx.deleteMessage();
   ctx.reply("Saved");
 });
 

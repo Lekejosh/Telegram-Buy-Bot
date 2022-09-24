@@ -27,13 +27,11 @@
 //   }
 //   console.log(err.message)
 
-
 // };
 
 const { Telegraf } = require("telegraf");
 
 const bot = new Telegraf("5561811963:AAFV83oL535KmiZOHwkSIybgiwmoCAxUCxQ");
-
 
 module.exports = function ({ err, name, ctx }) {
   const headers = JSON.stringify(err?.response?.headers, null, "-  ") || null;
@@ -52,7 +50,10 @@ module.exports = function ({ err, name, ctx }) {
   } else {
     stringMessage = `Message: ${message}\n\nConfig: ${config}`;
   }
+  if (err.name === "TypeError") {
+    ctx.reply("can't read test");
+  }
 
   // notify user
-  if (ctx) ctx.reply(`Error ${message}...Start again`);
+  ctx.reply(`Error ${message}...Start again`);
 };

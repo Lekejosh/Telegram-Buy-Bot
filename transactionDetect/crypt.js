@@ -121,7 +121,7 @@ class transaction {
               // Sending ALert details
               // this.transaction.lastValue = user[i].timeStamp;
               if (sent.length === 2 && received.length === 1) {
-                if (Clock[0] === date) {
+                if (Clock[0] === date || date == Clock[0]) {
                   return;
                 } else {
                   let chatId = `${ID[0]}`;
