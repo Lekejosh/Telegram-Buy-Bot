@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  chatId: { type: String, unique: true },
+  chatId: { type: String },
   ethAddress: {
     name: { type: String },
     token_Address: { type: String },

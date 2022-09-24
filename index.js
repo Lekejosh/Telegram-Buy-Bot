@@ -5,6 +5,7 @@ const { session } = require("telegraf-session-mongoose");
 const text = require("./text.json");
 const verifyToken = require("./ethvalidate");
 const User = require("./userModel");
+const Group = require("./groupModel");
 const Stage = require("telegraf/stage");
 // Transaction Robot
 const Robot = require("./transactionDetect/bot");
@@ -15,6 +16,9 @@ const bot = new Telegraf("5561811963:AAFV83oL535KmiZOHwkSIybgiwmoCAxUCxQ");
 const imageScene = require("./scenes/imageScene.js").imageScene;
 // //Transaction RObot Instance
 const instance = new Robot(bot);
+const errorMiddleware = require("./error/error");
+const ErrorMiddleware = require("./error/errorHandler");
+const catchAsyncErrors = require("./error/catchAsyncErrors");
 // Bot alert interval
 setInterval(async () => {
   try {
@@ -50,23 +54,35 @@ bot.use(function (ctx, next) {
   }
 });
 
-// bot.start((ctx) => ctx.reply(`Deep link Payload:${ctx.startPayload}`));
+bot.hears(/\/start(.*)/, (msg, match) => {
+  console.log(msg);
+  console.log(match);
+  let upd = msg.match.input.split(" ");
+  console.log(upd[1]);
+  console.log(msg.update);
+  console.log("chat", msg.update.message.chat);
+  console.log("from", msg.update.message.from);
+});
 
-// bot.command("image", (ctx) =>
-//   ctx.replyWithPhoto({ source: "./ggg.png" })
-// );
+bot.catch((err, ctx) => {
+  return errorMiddleware({ err, ctx, name: "index.js/bot.catch()" });
+});
 
 //Token add and Database Save
 
-bot.command("addtoken", (ctx, next) => {
+bot.command("addtoken", async (ctx, next) => {
   if (ctx.from._is_in_admin_list) {
-    User.findOne({ chatId: ctx.chat.id }).then((user) => {
+    await User.findOne({ chatId: ctx.chat.id }).then((user) => {
       if (user) {
+        console.log(ctx);
+        console.log(ctx.chat.type);
+        console.log(ctx.update);
+        console.log("chat=>", ctx.update.message.chat._admins);
+        console.log("from=>", ctx.update.message.from);
         next();
       } else {
-        const newUser = User.create({
+        User.create({
           chatId: ctx.chat.id,
-          telegram: "Not Set",
           step: "100",
           cSupply: "100000000000000000",
           emoji: "Not Set",
@@ -76,9 +92,20 @@ bot.command("addtoken", (ctx, next) => {
           timeStamp: "0000000",
         }).then((neww) => {
           console.log(neww);
+          let admi = ctx.update.message.chat._admins;
+          
+            Group.create({
+              chatId: ctx.chat.id,
+              groupName: ctx.chat.title,
+              adminList: { userId: admi[0].user.id, status: admi[0].status },
+            }).then((upda) => {
+              console.log(upda);
+            })
+          
         });
       }
     });
+    
   } else {
     return next();
   }
@@ -89,8 +116,8 @@ bot.command("addtoken", (ctx, next) => {
         inline_keyboard: [
           [
             {
-              text: "Proceed",
-              callback_data: "plus",
+              text: "Click Me",
+              url: `https://t.me/BuildGr33nBuyBot?start=${ctx.chat.id}`,
             },
           ],
         ],
@@ -134,7 +161,10 @@ bot.action("add", function (ctx) {
       if (error) {
         console.log(err);
       } else {
-        if (data[0].ethAddress.name == null || data[0].ethAddress.name == undefined) {
+        if (
+          data[0].ethAddress.name == null ||
+          data[0].ethAddress.name == undefined
+        ) {
           bot.telegram.sendMessage(
             ctx.chat.id,
             text.set + " " + `${ctx.chat.title}`,
@@ -467,10 +497,10 @@ bot.action("tokenDelete", function (ctx) {
       console.log(data[0].ethAddress);
       let toks = data[0].ethAddress;
       User.findOneAndDelete(
-        ctx.chat.id,
-        {
-          $pull: { toks },
-        },
+        { chatId },
+
+        { toks },
+
         (error, data) => {
           if (error) {
             ctx.reply("error");
@@ -578,37 +608,35 @@ const tokenVerify = new WizardScene(
         if (pairs.length === 0 || pairs[0].chainId !== "ethereum") {
           ctx.reply("Address is not valid");
         } else {
-              var chatId = ctx.chat.id;
-              User.findOneAndUpdate(
-                { chatId },
-                {
-                  ethAddress: {
-                    name: pairs[0].baseToken.name,
-                    token_Address: pairs[0].baseToken.address,
-                    pair_Address: pairs[0].pairAddress,
-                  },
-                }
-              ).then((neww) => {
-                console.log(neww);
-              });
-              bot.telegram.sendMessage(
-                ctx.chat.id,
-                `Token found\n Tap to set alert info`,
-                {
-                  reply_markup: {
-                    inline_keyboard: [
-                      [
-                        {
-                          text: `${pairs[0].baseToken.symbol}/${pairs[0].quoteToken.symbol} \n\n ${pairs[0].baseToken.address}`,
-                          callback_data: "tsetting",
-                        },
-                      ],
-                    ],
-                  },
-                }
-              );
-            
-          
+          var chatId = ctx.chat.id;
+          User.findOneAndUpdate(
+            { chatId },
+            {
+              ethAddress: {
+                name: pairs[0].baseToken.name,
+                token_Address: pairs[0].baseToken.address,
+                pair_Address: pairs[0].pairAddress,
+              },
+            }
+          ).then((neww) => {
+            console.log(neww);
+          });
+          bot.telegram.sendMessage(
+            ctx.chat.id,
+            `Token found\n Tap to set alert info`,
+            {
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    {
+                      text: `${pairs[0].baseToken.symbol}/${pairs[0].quoteToken.symbol} \n\n ${pairs[0].baseToken.address}`,
+                      callback_data: "tsetting",
+                    },
+                  ],
+                ],
+              },
+            }
+          );
         }
       })
       .catch((err) => ctx.reply(err.message));
@@ -899,7 +927,11 @@ const init = async () => {
     .catch((err) => {
       console.log(err);
     });
-  bot.launch();
+  bot.launch("uncaughtException", (err) => {
+    console.log(`Error: $err: ${err.message}`);
+    console.log(`Shutting down the server due to uncaught Expectation`);
+    bot.exit(1);
+  });
 };
 
 init();
