@@ -4,8 +4,6 @@ const {
   image
 } = require("./crypt");
 
-const User = require("../userModel");
-
 class Bot {
   constructor(bot) {
     this.bot = bot;
@@ -18,7 +16,7 @@ class Bot {
 
   // Send Alert message
 
-  async sendMessages(message) {
+sendMessages(message) {
     
 
  

@@ -28,16 +28,12 @@ setInterval(async () => {
     console.error(error);
     return;
   }
-}, 35000)
+}, 30000);
 
 // Session start
 
 bot.use(function (ctx, next) {
   if (ctx.chat.id > 0) {
-    // bot.telegram.sendMessage(ctx.chat.id, text.chatStart, {
-    //   parse_mode: "HTML",
-    //   disable_web_page_preview: true,
-    // });
     next();
   } else {
     return bot.telegram
@@ -285,43 +281,42 @@ bot.action("add", function (ctx) {
 
 // Settings
 bot.action("setting", function (ctx) {
- ctx.deleteMessage();
-    User.find({ chatId: mainId[0] }, (error, data) => {
-      if (error) {
-        console.log(err);
+  ctx.deleteMessage();
+  User.find({ chatId: mainId[0] }, (error, data) => {
+    if (error) {
+      console.log(err);
+    } else {
+      console.log(data[0]?.ethAddress);
+      // }
+      if (
+        data[0]?.ethAddress == null ||
+        data[0]?.ethAddress.name == undefined
+      ) {
+        ctx.reply(
+          "No token Registered To the group... Trying adding a New token"
+        );
       } else {
-        console.log(data[0]?.ethAddress);
-        // }
-        if (
-          data[0]?.ethAddress == null ||
-          data[0]?.ethAddress.name == undefined
-        ) {
-          ctx.reply(
-            "No token Registered To the group... Trying adding a New token"
-          );
-        } else {
-          bot.telegram.sendMessage(ctx.chat.id, text.setting, {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: `${data[0].ethAddress.name}`,
-                    callback_data: "tsetting",
-                  },
-                ],
-                [
-                  {
-                    text: `>>cancel`,
-                    callback_data: "cancel",
-                  },
-                ],
+        bot.telegram.sendMessage(ctx.chat.id, text.setting, {
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: `${data[0].ethAddress.name}`,
+                  callback_data: "tsetting",
+                },
               ],
-            },
-          });
-        }
+              [
+                {
+                  text: `>>cancel`,
+                  callback_data: "cancel",
+                },
+              ],
+            ],
+          },
+        });
       }
-    });
- 
+    }
+  });
 });
 
 bot.action("tsetting", function (ctx) {
@@ -331,74 +326,73 @@ bot.action("tsetting", function (ctx) {
       console.log(error);
     } else {
       console.log(data[0].chatId);
-      
-        const set = {
-          reply_markup: {
-            inline_keyboard: [
-              [
-                {
-                  text: `Telegram Group Link: ${data[0].telegram}`,
-                  callback_data: "tele",
-                },
-              ],
-              [
-                {
-                  text: `step: $ ${data[0].step}`,
-                  callback_data: "step",
-                },
-              ],
-              [
-                {
-                  text: `Circulating Supply: ${data[0].cSupply}`,
-                  callback_data: "cSupply",
-                },
-              ],
-              [
-                {
-                  text: `Emoji: ${data[0].emoji}`,
-                  callback_data: "emoji",
-                },
-              ],
-              [
-                {
-                  text: `Media Enabled: ${data[0].mEnable}`,
-                  callback_data: "menable",
-                },
-              ],
-              [
-                {
-                  text: `Media Image (click to view/change)`,
-                  callback_data: "mImages",
-                },
-              ],
-              [
-                {
-                  text: "Delete This Token",
-                  callback_data: "tokenDelete",
-                },
-              ],
-              [
-                {
-                  text: "Save Token settings",
-                  callback_data: "save",
-                },
-              ],
-              [
-                {
-                  text: ">>Cancel",
-                  callback_data: "cancel",
-                },
-              ],
+
+      const set = {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: `Telegram Group Link: ${data[0].telegram}`,
+                callback_data: "tele",
+              },
             ],
-          },
-          parse_mode: "HTML",
-        };
-        bot.telegram.sendMessage(
-          ctx.chat.id,
-          `Successfully added Token Name: ${data[0].ethAddress.name}  to ${ctx.chat.title}.\nPlease update each of the settings below to suit your needs. If you want to change any, simply\nclick on the applicable button.\nToken Name: ${data[0].ethAddress.name} \nToken Address:${data[0].ethAddress.token_Address} \nPair Address:${data[0].ethAddress.pair_Address}`,
-          set
-        );
-     
+            [
+              {
+                text: `step: $ ${data[0].step}`,
+                callback_data: "step",
+              },
+            ],
+            [
+              {
+                text: `Circulating Supply: ${data[0].cSupply}`,
+                callback_data: "cSupply",
+              },
+            ],
+            [
+              {
+                text: `Emoji: ${data[0].emoji}`,
+                callback_data: "emoji",
+              },
+            ],
+            [
+              {
+                text: `Media Enabled: ${data[0].mEnable}`,
+                callback_data: "menable",
+              },
+            ],
+            [
+              {
+                text: `Media Image (click to view/change)`,
+                callback_data: "mImages",
+              },
+            ],
+            [
+              {
+                text: "Delete This Token",
+                callback_data: "tokenDelete",
+              },
+            ],
+            [
+              {
+                text: "Save Token settings",
+                callback_data: "save",
+              },
+            ],
+            [
+              {
+                text: ">>Cancel",
+                callback_data: "cancel",
+              },
+            ],
+          ],
+        },
+        parse_mode: "HTML",
+      };
+      bot.telegram.sendMessage(
+        ctx.chat.id,
+        `Successfully added Token Name: ${data[0].ethAddress.name}  to ${ctx.chat.title}.\nPlease update each of the settings below to suit your needs. If you want to change any, simply\nclick on the applicable button.\nToken Name: ${data[0].ethAddress.name} \nToken Address:${data[0].ethAddress.token_Address} \nPair Address:${data[0].ethAddress.pair_Address}`,
+        set
+      );
     }
   });
 });
@@ -464,33 +458,32 @@ bot.action("viewImage", (ctx) => {
 // Telegram Link Update and Edit
 
 bot.action("tele", function (ctx) {
- ctx.deleteMessage();
-    const chatId = ctx.chat.id;
-    User.find({ chatId }, (error, data) => {
-      if (error) {
-        console.log(error);
-      } else {
-        bot.telegram.sendMessage(ctx.chat.id, "What do you want to do", {
-          reply_markup: {
-            inline_keyboard: [
-              [
-                {
-                  text: "Current Link",
-                  callback_data: `currentLink`,
-                },
-              ],
-              [
-                {
-                  text: "Update Link",
-                  callback_data: `updateTele`,
-                },
-              ],
+  ctx.deleteMessage();
+  const chatId = ctx.chat.id;
+  User.find({ chatId }, (error, data) => {
+    if (error) {
+      console.log(error);
+    } else {
+      bot.telegram.sendMessage(ctx.chat.id, "What do you want to do", {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: "Current Link",
+                callback_data: `currentLink`,
+              },
             ],
-          },
-        });
-      }
-    });
-
+            [
+              {
+                text: "Update Link",
+                callback_data: `updateTele`,
+              },
+            ],
+          ],
+        },
+      });
+    }
+  });
 });
 
 bot.action("currentLink", (ctx) => {
@@ -539,64 +532,63 @@ bot.action("tokenDelete", function (ctx) {
 //ETH  Scene
 
 bot.action("eth", function (ctx) {
-ctx.deleteMessage();
-    bot.telegram.sendMessage(ctx.chat.id, text.token, {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "Uniswap",
-              callback_data: "e-Uniswap",
-            },
-            {
-              text: "Pancakeswap",
-              callback_data: "e-Pancakeswap",
-            },
-          ],
-          [
-            {
-              text: "Uniswap v3",
-              callback_data: "e-UniswapV3",
-            },
-            {
-              text: "biswap",
-              callback_data: "e-Biswap",
-            },
-          ],
-          [
-            {
-              text: "Sushiswap",
-              callback_data: "e-Sushiswap",
-            },
-            {
-              text: "pyeswap",
-              callback_data: "e-Pyeswap",
-            },
-          ],
-          [
-            {
-              text: "shibaswap",
-              callback_data: "e-Shibaswap",
-            },
-            {
-              text: "busta",
-              callback_data: "e-Busta",
-            },
-          ],
-          [
-            {
-              text: ">>cancel",
-              callback_data: "cancel",
-            },
-            {
-              text: ">>cancel",
-              callback_data: "cancel",
-            },
-          ],
+  ctx.deleteMessage();
+  bot.telegram.sendMessage(ctx.chat.id, text.token, {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: "Uniswap",
+            callback_data: "e-Uniswap",
+          },
+          {
+            text: "Pancakeswap",
+            callback_data: "e-Pancakeswap",
+          },
         ],
-      },
-    });
-  
+        [
+          {
+            text: "Uniswap v3",
+            callback_data: "e-UniswapV3",
+          },
+          {
+            text: "biswap",
+            callback_data: "e-Biswap",
+          },
+        ],
+        [
+          {
+            text: "Sushiswap",
+            callback_data: "e-Sushiswap",
+          },
+          {
+            text: "pyeswap",
+            callback_data: "e-Pyeswap",
+          },
+        ],
+        [
+          {
+            text: "shibaswap",
+            callback_data: "e-Shibaswap",
+          },
+          {
+            text: "busta",
+            callback_data: "e-Busta",
+          },
+        ],
+        [
+          {
+            text: ">>cancel",
+            callback_data: "cancel",
+          },
+          {
+            text: ">>cancel",
+            callback_data: "cancel",
+          },
+        ],
+      ],
+    },
+  });
 });
 let ethList = [
   "e-Uniswap",
@@ -629,7 +621,6 @@ const tokenVerify = new WizardScene(
         if (pairs.length === 0 || pairs[0].chainId !== "ethereum") {
           ctx.reply("Address is not valid");
         } else {
-          
           User.findOneAndUpdate(
             { chatId: mainId[0] },
             {
@@ -787,7 +778,7 @@ const Csupply = new WizardScene(
     ctx.wizard.state.data.address = ctx.message.text;
     const supply = ctx.wizard.state.data.address;
     console.log(ctx.chat.id);
-    
+
     const user = User.findOneAndUpdate(
       { chatId: mainId[0] },
       { cSupply: `${supply}` },
@@ -824,7 +815,7 @@ const Emoji = new WizardScene(
   (ctx) => {
     ctx.wizard.state.data.address = ctx.message.text;
     const emoji = ctx.wizard.state.data.address;
-    
+
     const user = User.findOneAndUpdate(
       { chatId: mainId[0] },
       { emoji: `${emoji}` },
@@ -862,7 +853,7 @@ const Media = new WizardScene(
     ctx.wizard.state.data.address = ctx.message.text;
     const menable = ctx.wizard.state.data.address;
     console.log(ctx.chat.id);
-    
+
     const user = User.findOneAndUpdate(
       { chatId: mainId[0] },
       { mEnable: `${menable}` },
@@ -932,12 +923,12 @@ bot.action("menable", (ctx) => {
 
 // Cancel Action
 bot.action("cancel", (ctx) => {
+  ctx.deleteMessage();
   ctx.reply("bye");
 });
 
 //Save Token
 bot.action("save", (ctx) => {
-
   ctx.deleteMessage();
   ctx.reply("Saved");
 });
