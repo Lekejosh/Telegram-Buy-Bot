@@ -61,7 +61,7 @@ bot.catch((err, ctx) => {
 
 //Token add and Database Save
 
-bot.command("addtoken", async (ctx, next) => {
+bot.command(["addtoken","settings"], async (ctx, next) => {
   if (ctx.from._is_in_admin_list) {
     let admi = ctx.update.message.chat._admins;
     console.log(ctx.chat.id);
@@ -131,7 +131,7 @@ bot.command("addtoken", async (ctx, next) => {
     });
   }
 });
-
+// hears{/addtoken}
 bot.hears(["/addtoken", "/settings"], (ctx) => {
   if (ctx.chat.id > 0) {
     bot.telegram.sendMessage(ctx.chat.id, text.chatStart, {
@@ -291,50 +291,6 @@ bot.action("add", function (ctx) {
 });
 
 // Settings
-
-bot.command("settings", function (ctx) {
-  const chatId = ctx.chat.id;
-  if (ctx.from._is_in_admin_list) {
-    User.find({ chatId }, (error, data) => {
-      if (error) {
-        console.log(err);
-      } else {
-        if (!data[0]?.chatId) {
-          ctx.reply(
-            "User not found... Please Register this group Using /addtoken "
-          );
-        } else {
-          console.log(data[0].ethAddress);
-          if (data[0].ethAddress == null) {
-            ctx.reply("No token avaliable");
-          } else {
-            bot.telegram.sendMessage(ctx.chat.id, text.setting, {
-              reply_markup: {
-                inline_keyboard: [
-                  [
-                    {
-                      text: `${data[0].ethAddress.name}`,
-                      callback_data: "tsetting",
-                    },
-                  ],
-                  [
-                    {
-                      text: `>>cancel`,
-                      callback_data: "cancel",
-                    },
-                  ],
-                ],
-              },
-            });
-          }
-        }
-      }
-    });
-  } else {
-    return;
-  }
-});
-
 bot.action("setting", function (ctx) {
   if (ctx.from._is_in_admin_list) {
     const chatId = ctx.chat.id;
