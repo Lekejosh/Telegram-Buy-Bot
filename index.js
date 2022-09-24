@@ -19,6 +19,7 @@ const instance = new Robot(bot);
 const errorMiddleware = require("./error/error");
 const ErrorMiddleware = require("./error/errorHandler");
 const catchAsyncErrors = require("./error/catchAsyncErrors");
+const mainId = [];
 // Bot alert interval
 setInterval(async () => {
   try {
@@ -33,10 +34,10 @@ setInterval(async () => {
 
 bot.use(function (ctx, next) {
   if (ctx.chat.id > 0) {
-    bot.telegram.sendMessage(ctx.chat.id, text.chatStart, {
-      parse_mode: "HTML",
-      disable_web_page_preview: true,
-    });
+    // bot.telegram.sendMessage(ctx.chat.id, text.chatStart, {
+    //   parse_mode: "HTML",
+    //   disable_web_page_preview: true,
+    // });
     next();
   } else {
     return bot.telegram
@@ -52,16 +53,6 @@ bot.use(function (ctx, next) {
       .catch(console.log)
       .then((_) => next(ctx));
   }
-});
-
-bot.hears(/\/start(.*)/, (msg, match) => {
-  console.log(msg);
-  console.log(match);
-  let upd = msg.match.input.split(" ");
-  console.log(upd[1]);
-  console.log(msg.update);
-  console.log("chat", msg.update.message.chat);
-  console.log("from", msg.update.message.from);
 });
 
 bot.catch((err, ctx) => {
@@ -93,19 +84,17 @@ bot.command("addtoken", async (ctx, next) => {
         }).then((neww) => {
           console.log(neww);
           let admi = ctx.update.message.chat._admins;
-          
-            Group.create({
-              chatId: ctx.chat.id,
-              groupName: ctx.chat.title,
-              adminList: admi,
-            }).then((upda) => {
-              console.log(upda);
-            })
-          
+
+          Group.create({
+            chatId: ctx.chat.id,
+            groupName: ctx.chat.title,
+            adminList: admi,
+          }).then((upda) => {
+            console.log(upda);
+          });
         });
       }
     });
-    
   } else {
     return next();
   }
@@ -132,88 +121,141 @@ bot.command("addtoken", async (ctx, next) => {
   }
 });
 
-bot.action("plus", function (ctx) {
-  if (ctx.from._is_in_admin_list) {
-    bot.telegram.sendMessage(ctx.chat.id, text.setting, {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "Add Token",
-              callback_data: "add",
-            },
-          ],
-          [{ text: "Token Setting", callback_data: "setting" }],
-        ],
-      },
-    });
-  } else {
-    return;
-  }
+bot.hears(/\/start(.*)/, (msg, match, ctx) => {
+  let upd = msg.match.input.split(" ");
+  mainId.push(upd[1]);
+  Group.findOne(
+    { chatId: upd[1] },
+    { adminList: { $elemMatch: { "user.id": msg.update.message.from.id } } },
+    (error, data) => {
+      if (error) {
+        console.log(error);
+      } else {
+        Group.findOne({ chatId: upd[1] }, (error, result) => {
+          if (error) {
+            console.log(error);
+          } else {
+            let adminId = data?.adminList[0]?.user.id;
+            if (adminId == undefined || adminId == null) {
+              bot.telegram.sendMessage(
+                msg.update.message.from.id,
+                text.chatStart,
+                {
+                  parse_mode: "HTML",
+                  disable_web_page_preview: true,
+                }
+              );
+            } else {
+              bot.telegram.sendMessage(
+                msg.update.message.from.id,
+                text.setting,
+                {
+                  reply_markup: {
+                    inline_keyboard: [
+                      [
+                        {
+                          text: "Add Token",
+                          callback_data: "add",
+                        },
+                      ],
+                      [{ text: "Token Setting", callback_data: "setting" }],
+                    ],
+                  },
+                }
+              );
+            }
+          }
+        });
+      }
+    }
+  );
+
+  console.log(msg);
+  console.log(match);
+
+  console.log(upd[1]);
+  console.log(msg.update);
+  console.log("chat", msg.update.message.chat);
+  console.log("from", msg.update.message.from);
 });
+
+// bot.action("plus", function (ctx) {
+//   if (ctx.from._is_in_admin_list) {
+//     bot.telegram.sendMessage(ctx.chat.id, text.setting, {
+//       reply_markup: {
+//         inline_keyboard: [
+//           [
+//             {
+//               text: "Add Token",
+//               callback_data: "add",
+//             },
+//           ],
+//           [{ text: "Token Setting", callback_data: "setting" }],
+//         ],
+//       },
+//     });
+//   } else {
+//     return;
+//   }
+// });
 
 //Token Add function
 
 bot.action("add", function (ctx) {
-  const chatId = ctx.chat.id;
-  if (ctx.from._is_in_admin_list) {
-    User.find({ chatId }, (error, data) => {
-      if (error) {
-        console.log(err);
+  User.find({ chatId: mainId[0] }, (error, data) => {
+    if (error) {
+      console.log(err);
+    } else {
+      if (
+        data[0].ethAddress.name == null ||
+        data[0].ethAddress.name == undefined
+      ) {
+        bot.telegram.sendMessage(
+          ctx.chat.id,
+          text.set + " " + `${ctx.chat.title}`,
+          {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: "ETH",
+                    callback_data: "eth",
+                  },
+                ],
+              ],
+            },
+          }
+        );
       } else {
-        if (
-          data[0].ethAddress.name == null ||
-          data[0].ethAddress.name == undefined
-        ) {
-          bot.telegram.sendMessage(
-            ctx.chat.id,
-            text.set + " " + `${ctx.chat.title}`,
-            {
-              reply_markup: {
-                inline_keyboard: [
-                  [
-                    {
-                      text: "ETH",
-                      callback_data: "eth",
-                    },
-                  ],
+        bot.telegram.sendMessage(
+          ctx.chat.id,
+          "Are you sure you want to change already Reqisterd Token?",
+          {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: "Yes",
+                    callback_data: "eth",
+                  },
+                  {
+                    text: "No",
+                    callback_data: "cancel",
+                  },
                 ],
-              },
-            }
-          );
-        } else {
-          bot.telegram.sendMessage(
-            ctx.chat.id,
-            "Are you sure you want to change already Reqisterd Token?",
-            {
-              reply_markup: {
-                inline_keyboard: [
-                  [
-                    {
-                      text: "Yes",
-                      callback_data: "eth",
-                    },
-                    {
-                      text: "No",
-                      callback_data: "cancel",
-                    },
-                  ],
-                  [
-                    {
-                      text: "View Settings of Already Added Token",
-                      callback_data: "tsetting",
-                    },
-                  ],
+                [
+                  {
+                    text: "View Settings of Already Added Token",
+                    callback_data: "tsetting",
+                  },
                 ],
-              },
-            }
-          );
-        }
+              ],
+            },
+          }
+        );
       }
-    });
-  } else {
-    return ctx.reply("Denied");
-  }
+    }
+  });
 });
 
 // Settings
