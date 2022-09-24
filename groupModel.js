@@ -4,6 +4,7 @@ const groupSchema = new mongoose.Schema(
   {
     chatId: { type: String },
     groupName: { type: String },
+    updateId: { type: Number },
     adminList: [{  }],
   },
 );

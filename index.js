@@ -28,7 +28,7 @@ setInterval(async () => {
     console.error(error);
     return;
   }
-}, 25000);
+}, 25000)
 
 // Session start
 
@@ -61,7 +61,7 @@ bot.catch((err, ctx) => {
 
 //Token add and Database Save
 
-bot.command(["addtoken","settings"], async (ctx, next) => {
+bot.command(["addtoken", "settings"], async (ctx, next) => {
   if (ctx.from._is_in_admin_list) {
     let admi = ctx.update.message.chat._admins;
     console.log(ctx.chat.id);
@@ -99,6 +99,7 @@ bot.command(["addtoken","settings"], async (ctx, next) => {
           Group.create({
             chatId: ctx.chat.id,
             groupName: ctx.chat.title,
+            updateId: 000000,
             adminList: admi,
           }).then((upda) => {
             console.log(upda);
@@ -131,7 +132,8 @@ bot.command(["addtoken","settings"], async (ctx, next) => {
     });
   }
 });
-// hears{/addtoken}
+
+// hears{/addtoken, /settings}
 bot.hears(["/addtoken", "/settings"], (ctx) => {
   if (ctx.chat.id > 0) {
     bot.telegram.sendMessage(ctx.chat.id, text.chatStart, {
@@ -141,74 +143,84 @@ bot.hears(["/addtoken", "/settings"], (ctx) => {
   }
 });
 
-bot.hears(/\/start(.*)/, (msg, match, ctx) => {
+bot.hears(/\/start(.*)/, (msg, match) => {
+  console.log(msg.update.update_id);
+
   let upd = msg.match.input.split(" ");
-  mainId.push(upd[1]);
+  mainId.unshift(upd[1]);
+  let chatId = upd[1];
   Group.findOne(
-    { chatId: upd[1] },
+    { chatId },
     { adminList: { $elemMatch: { "user.id": msg.update.message.from.id } } },
     (error, data) => {
       if (error) {
         console.log(error);
       } else {
-        Group.findOne({ chatId: upd[1] }, (error, result) => {
-          if (error) {
-            console.log(error);
-          } else {
-            let adminId = data?.adminList[0]?.user.id;
-            if (adminId == undefined || adminId == null) {
-              bot.telegram.sendMessage(
-                msg.update.message.from.id,
-                text.chatStart,
-                {
-                  parse_mode: "HTML",
-                  disable_web_page_preview: true,
-                }
-              );
+        Group.findOneAndUpdate(
+          { chatId },
+          { updateId: msg.update.update_id },
+          (error, upid) => {
+            if (error) {
+              console.log(error);
             } else {
-              console.log(data.adminList[0].status);
-              console.log(data.adminList[0].can_promote_members);
-              if (
-                data.adminList[0].status == "creator" ||
-                data.adminList[0].can_promote_members == true
-              ) {
-                bot.telegram.sendMessage(
-                  msg.update.message.from.id,
-                  text.setting,
-                  {
-                    reply_markup: {
-                      inline_keyboard: [
-                        [
-                          {
-                            text: "Add Token",
-                            callback_data: "add",
+              Group.findOne({ chatId }, (error, result) => {
+                if (error) {
+                  console.log(error);
+                } else {
+                  let adminId = data?.adminList[0]?.user.id;
+                  if (adminId == undefined || adminId == null) {
+                    bot.telegram.sendMessage(
+                      msg.update.message.from.id,
+                      text.chatStart,
+                      {
+                        parse_mode: "HTML",
+                        disable_web_page_preview: true,
+                      }
+                    );
+                  } else {
+                    console.log(data.adminList[0].status);
+                    console.log(data.adminList[0].can_promote_members);
+                    if (
+                      data.adminList[0].status == "creator" ||
+                      data.adminList[0].can_promote_members == true
+                    ) {
+                      bot.telegram.sendMessage(
+                        msg.update.message.from.id,
+                        text.setting,
+                        {
+                          reply_markup: {
+                            inline_keyboard: [
+                              [
+                                {
+                                  text: "Add Token",
+                                  callback_data: "add",
+                                },
+                              ],
+                              [
+                                {
+                                  text: "Token Setting",
+                                  callback_data: "setting",
+                                },
+                              ],
+                            ],
                           },
-                        ],
-                        [{ text: "Token Setting", callback_data: "setting" }],
-                      ],
-                    },
+                        }
+                      );
+                    } else {
+                      bot.telegram.sendMessage(
+                        msg.update.message.from.id,
+                        "You can't access this... Tell the Group creator to enable you 'Add new Admins', Then send '/addtoken' to the bot in the group"
+                      );
+                    }
                   }
-                );
-              } else {
-                bot.telegram.sendMessage(
-                  msg.update.message.from.id,
-                  "You can't access this... Tell the Group creator to enable you 'Add new Admins', Then send '/addtoken' to the bot in the group"
-                );
-              }
+                }
+              });
             }
           }
-        });
+        );
       }
     }
   );
-
-  // console.log(msg);
-  // console.log(match);
-
-  // console.log(upd[1]);
-  // console.log(msg.update);
-  // console.log("chat", msg.update.message.chat);
-  // console.log("from", msg.update.message.from);
 });
 
 //Token Add function
@@ -219,8 +231,8 @@ bot.action("add", function (ctx) {
       console.log(err);
     } else {
       if (
-        data[0].ethAddress.name == null ||
-        data[0].ethAddress.name == undefined
+        data[0]?.ethAddress.name == null ||
+        data[0]?.ethAddress.name == undefined
       ) {
         bot.telegram.sendMessage(
           ctx.chat.id,
@@ -272,17 +284,19 @@ bot.action("add", function (ctx) {
 
 // Settings
 bot.action("setting", function (ctx) {
-  if (ctx.from._is_in_admin_list) {
-    const chatId = ctx.chat.id;
-    User.find({ chatId }, (error, data) => {
+ 
+    User.find({ chatId: mainId[0] }, (error, data) => {
       if (error) {
         console.log(err);
       } else {
-        console.log(data[0].ethAddress);
+        console.log(data[0]?.ethAddress);
         // }
-        if (data[0].ethAddress == null) {
+        if (
+          data[0]?.ethAddress == null ||
+          data[0]?.ethAddress.name == undefined
+        ) {
           ctx.reply(
-            "No token Registered To this group... Trying adding a New token"
+            "No token Registered To the group... Trying adding a New token"
           );
         } else {
           bot.telegram.sendMessage(ctx.chat.id, text.setting, {
@@ -306,19 +320,16 @@ bot.action("setting", function (ctx) {
         }
       }
     });
-  } else {
-    return;
-  }
+ 
 });
 
 bot.action("tsetting", function (ctx) {
-  let chatId = ctx.chat.id;
-  User.find({ chatId }, (error, data) => {
+  User.find({ chatId: mainId[0] }, (error, data) => {
     if (error) {
       console.log(error);
     } else {
       console.log(data[0].chatId);
-      if (ctx.from._is_in_admin_list) {
+      
         const set = {
           reply_markup: {
             inline_keyboard: [
@@ -385,9 +396,7 @@ bot.action("tsetting", function (ctx) {
           `Successfully added Token Name: ${data[0].ethAddress.name}  to ${ctx.chat.title}.\nPlease update each of the settings below to suit your needs. If you want to change any, simply\nclick on the applicable button.\nToken Name: ${data[0].ethAddress.name} \nToken Address:${data[0].ethAddress.token_Address} \nPair Address:${data[0].ethAddress.pair_Address}`,
           set
         );
-      } else {
-        return;
-      }
+     
     }
   });
 });
@@ -451,7 +460,7 @@ bot.action("viewImage", (ctx) => {
 // Telegram Link Update and Edit
 
 bot.action("tele", function (ctx) {
-  if (ctx.from._is_in_admin_list) {
+ 
     const chatId = ctx.chat.id;
     User.find({ chatId }, (error, data) => {
       if (error) {
@@ -477,9 +486,7 @@ bot.action("tele", function (ctx) {
         });
       }
     });
-  } else {
-    return ctx.reply("Denied");
-  }
+
 });
 
 bot.action("currentLink", (ctx) => {
@@ -526,7 +533,7 @@ bot.action("tokenDelete", function (ctx) {
 //ETH  Scene
 
 bot.action("eth", function (ctx) {
-  if (ctx.from._is_in_admin_list) {
+
     bot.telegram.sendMessage(ctx.chat.id, text.token, {
       reply_markup: {
         inline_keyboard: [
@@ -583,9 +590,7 @@ bot.action("eth", function (ctx) {
         ],
       },
     });
-  } else {
-    return;
-  }
+  
 });
 let ethList = [
   "e-Uniswap",
@@ -618,9 +623,9 @@ const tokenVerify = new WizardScene(
         if (pairs.length === 0 || pairs[0].chainId !== "ethereum") {
           ctx.reply("Address is not valid");
         } else {
-          var chatId = ctx.chat.id;
+          
           User.findOneAndUpdate(
-            { chatId },
+            { chatId: mainId[0] },
             {
               ethAddress: {
                 name: pairs[0].baseToken.name,
@@ -667,9 +672,8 @@ const telegramLink = new WizardScene(
     ctx.wizard.state.data.address = ctx.message.text;
     const telegramLink = ctx.wizard.state.data.address;
     console.log(ctx.chat.id);
-    const chatId = ctx.chat.id;
     const user = User.findOneAndUpdate(
-      { chatId },
+      { chatId: mainId[0] },
       { telegram: `${telegramLink}` },
       (error, data) => {
         if (error) {
@@ -741,7 +745,7 @@ const Step = new WizardScene(
     console.log(ctx.chat.id);
     const chatId = ctx.chat.id;
     const user = User.findOneAndUpdate(
-      { chatId },
+      { chatId: mainId[0] },
       { step: `${step}` },
       (error, data) => {
         if (error) {
@@ -777,9 +781,9 @@ const Csupply = new WizardScene(
     ctx.wizard.state.data.address = ctx.message.text;
     const supply = ctx.wizard.state.data.address;
     console.log(ctx.chat.id);
-    const chatId = ctx.chat.id;
+    
     const user = User.findOneAndUpdate(
-      { chatId },
+      { chatId: mainId[0] },
       { cSupply: `${supply}` },
       (error, data) => {
         if (error) {
@@ -814,10 +818,9 @@ const Emoji = new WizardScene(
   (ctx) => {
     ctx.wizard.state.data.address = ctx.message.text;
     const emoji = ctx.wizard.state.data.address;
-    console.log(ctx.chat.id);
-    const chatId = ctx.chat.id;
+    
     const user = User.findOneAndUpdate(
-      { chatId },
+      { chatId: mainId[0] },
       { emoji: `${emoji}` },
       (error, data) => {
         if (error) {
@@ -853,9 +856,9 @@ const Media = new WizardScene(
     ctx.wizard.state.data.address = ctx.message.text;
     const menable = ctx.wizard.state.data.address;
     console.log(ctx.chat.id);
-    const chatId = ctx.chat.id;
+    
     const user = User.findOneAndUpdate(
-      { chatId },
+      { chatId: mainId[0] },
       { mEnable: `${menable}` },
       (error, data) => {
         if (error) {
