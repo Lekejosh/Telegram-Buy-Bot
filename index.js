@@ -97,7 +97,7 @@ bot.command("addtoken", async (ctx, next) => {
             Group.create({
               chatId: ctx.chat.id,
               groupName: ctx.chat.title,
-              adminList: { userId: admi[0].user.id, status: admi[0].status },
+              adminList: admi,
             }).then((upda) => {
               console.log(upda);
             })
