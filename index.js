@@ -222,373 +222,413 @@ bot.hears(/\/start(.*)/, (msg, match) => {
 //Token Add function
 
 bot.action("add", function (ctx) {
-  ctx.deleteMessage();
-  User.find({ chatId: mainId[0] }, (error, data) => {
-    if (error) {
-      console.log(err);
-    } else {
-      if (
-        data[0]?.ethAddress.name == null ||
-        data[0]?.ethAddress.name == undefined
-      ) {
-        bot.telegram.sendMessage(
-          ctx.chat.id,
-          text.set + " " + `${ctx.chat.title}`,
-          {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: "ETH",
-                    callback_data: "eth",
-                  },
-                ],
-              ],
-            },
-          }
-        );
+  if (mainId[0] == undefined) {
+    return ctx.reply("Click The Link from your group again");
+  } else {
+    ctx.deleteMessage();
+    User.find({ chatId: mainId[0] }, (error, data) => {
+      if (error) {
+        console.log(err);
       } else {
-        bot.telegram.sendMessage(
-          ctx.chat.id,
-          "Are you sure you want to change already Reqisterd Token?",
-          {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: "Yes",
-                    callback_data: "eth",
-                  },
-                  {
-                    text: "No",
-                    callback_data: "cancel",
-                  },
+        if (
+          data[0]?.ethAddress.name == null ||
+          data[0]?.ethAddress.name == undefined
+        ) {
+          bot.telegram.sendMessage(
+            ctx.chat.id,
+            text.set + " " + `${ctx.chat.title}`,
+            {
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    {
+                      text: "ETH",
+                      callback_data: "eth",
+                    },
+                  ],
                 ],
-                [
-                  {
-                    text: "View Settings of Already Added Token",
-                    callback_data: "tsetting",
-                  },
+              },
+            }
+          );
+        } else {
+          bot.telegram.sendMessage(
+            ctx.chat.id,
+            "Are you sure you want to change already Reqisterd Token?",
+            {
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    {
+                      text: "Yes",
+                      callback_data: "eth",
+                    },
+                    {
+                      text: "No",
+                      callback_data: "cancel",
+                    },
+                  ],
+                  [
+                    {
+                      text: "View Settings of Already Added Token",
+                      callback_data: "tsetting",
+                    },
+                  ],
                 ],
-              ],
-            },
-          }
-        );
+              },
+            }
+          );
+        }
       }
-    }
-  });
+    });
+  }
 });
 
 // Settings
 bot.action("setting", function (ctx) {
-  ctx.deleteMessage();
-  User.find({ chatId: mainId[0] }, (error, data) => {
-    if (error) {
-      console.log(err);
-    } else {
-      console.log(data[0]?.ethAddress);
-      // }
-      if (
-        data[0]?.ethAddress == null ||
-        data[0]?.ethAddress.name == undefined
-      ) {
-        ctx.reply(
-          "No token Registered To the group... Trying adding a New token"
-        );
+  if (mainId[0] == undefined) {
+    return ctx.reply("Click The Link from your group again");
+  } else {
+    ctx.deleteMessage();
+    User.find({ chatId: mainId[0] }, (error, data) => {
+      if (error) {
+        console.log(err);
       } else {
-        bot.telegram.sendMessage(ctx.chat.id, text.setting, {
+        console.log(data[0]?.ethAddress);
+        // }
+        if (
+          data[0]?.ethAddress == null ||
+          data[0]?.ethAddress.name == undefined
+        ) {
+          ctx.reply(
+            "No token Registered To the group... Trying adding a New token"
+          );
+        } else {
+          bot.telegram.sendMessage(ctx.chat.id, text.setting, {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: `${data[0].ethAddress.name}`,
+                    callback_data: "tsetting",
+                  },
+                ],
+                [
+                  {
+                    text: `>>cancel`,
+                    callback_data: "cancel",
+                  },
+                ],
+              ],
+            },
+          });
+        }
+      }
+    });
+  }
+});
+
+bot.action("tsetting", function (ctx) {
+  if (mainId[0] == undefined) {
+    return ctx.reply("Click The Link from your group again");
+  } else {
+    ctx.deleteMessage();
+    User.find({ chatId: mainId[0] }, (error, data) => {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log(data[0].chatId);
+
+        const set = {
           reply_markup: {
             inline_keyboard: [
               [
                 {
-                  text: `${data[0].ethAddress.name}`,
-                  callback_data: "tsetting",
+                  text: `Telegram Group Link: ${data[0].telegram}`,
+                  callback_data: "tele",
                 },
               ],
               [
                 {
-                  text: `>>cancel`,
+                  text: `step: $ ${data[0].step}`,
+                  callback_data: "step",
+                },
+              ],
+              [
+                {
+                  text: `Circulating Supply: ${data[0].cSupply}`,
+                  callback_data: "cSupply",
+                },
+              ],
+              [
+                {
+                  text: `Emoji: ${data[0].emoji}`,
+                  callback_data: "emoji",
+                },
+              ],
+              [
+                {
+                  text: `Media Enabled: ${data[0].mEnable}`,
+                  callback_data: "menable",
+                },
+              ],
+              [
+                {
+                  text: `Media Image (click to view/change)`,
+                  callback_data: "mImages",
+                },
+              ],
+              [
+                {
+                  text: "Delete This Token",
+                  callback_data: "tokenDelete",
+                },
+              ],
+              [
+                {
+                  text: "Save Token settings",
+                  callback_data: "save",
+                },
+              ],
+              [
+                {
+                  text: ">>Cancel",
                   callback_data: "cancel",
                 },
               ],
             ],
           },
-        });
+          parse_mode: "HTML",
+        };
+        bot.telegram.sendMessage(
+          ctx.chat.id,
+          `Successfully added Token Name: ${data[0].ethAddress.name}  to ${ctx.chat.title}.\nPlease update each of the settings below to suit your needs. If you want to change any, simply\nclick on the applicable button.\nToken Name: ${data[0].ethAddress.name} \nToken Address:${data[0].ethAddress.token_Address} \nPair Address:${data[0].ethAddress.pair_Address}`,
+          set
+        );
       }
-    }
-  });
-});
-
-bot.action("tsetting", function (ctx) {
-  ctx.deleteMessage();
-  User.find({ chatId: mainId[0] }, (error, data) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(data[0].chatId);
-
-      const set = {
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: `Telegram Group Link: ${data[0].telegram}`,
-                callback_data: "tele",
-              },
-            ],
-            [
-              {
-                text: `step: $ ${data[0].step}`,
-                callback_data: "step",
-              },
-            ],
-            [
-              {
-                text: `Circulating Supply: ${data[0].cSupply}`,
-                callback_data: "cSupply",
-              },
-            ],
-            [
-              {
-                text: `Emoji: ${data[0].emoji}`,
-                callback_data: "emoji",
-              },
-            ],
-            [
-              {
-                text: `Media Enabled: ${data[0].mEnable}`,
-                callback_data: "menable",
-              },
-            ],
-            [
-              {
-                text: `Media Image (click to view/change)`,
-                callback_data: "mImages",
-              },
-            ],
-            [
-              {
-                text: "Delete This Token",
-                callback_data: "tokenDelete",
-              },
-            ],
-            [
-              {
-                text: "Save Token settings",
-                callback_data: "save",
-              },
-            ],
-            [
-              {
-                text: ">>Cancel",
-                callback_data: "cancel",
-              },
-            ],
-          ],
-        },
-        parse_mode: "HTML",
-      };
-      bot.telegram.sendMessage(
-        ctx.chat.id,
-        `Successfully added Token Name: ${data[0].ethAddress.name}  to ${ctx.chat.title}.\nPlease update each of the settings below to suit your needs. If you want to change any, simply\nclick on the applicable button.\nToken Name: ${data[0].ethAddress.name} \nToken Address:${data[0].ethAddress.token_Address} \nPair Address:${data[0].ethAddress.pair_Address}`,
-        set
-      );
-    }
-  });
+    });
+  }
 });
 
 bot.action("mImages", (ctx) => {
-  ctx.deleteMessage();
-  chatId = ctx.chat.id;
-  User.find({ chatId }, (error, data) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(data[0].mEnable);
-      if (data[0].mEnable == false) {
-        ctx.reply("Media is not enabled... Enable in settings");
+  if (mainId[0] == undefined) {
+    return ctx.reply("Click The Link from your group again");
+  } else {
+    ctx.deleteMessage();
+    chatId = ctx.chat.id;
+    User.find({ chatId }, (error, data) => {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log(data[0].mEnable);
+        if (data[0].mEnable == false) {
+          ctx.reply("Media is not enabled... Enable in settings");
+        } else {
+          bot.telegram.sendMessage(ctx.chat.id, "What do you want to do", {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: "View Already Saved Image",
+                    callback_data: `viewImage`,
+                  },
+                ],
+                [
+                  {
+                    text: "Change Image",
+                    callback_data: `mImageChange`,
+                  },
+                ],
+              ],
+            },
+          });
+        }
+      }
+    });
+  }
+});
+
+bot.action("viewImage", (ctx) => {
+  if (mainId[0] == undefined) {
+    return ctx.reply("Click The Link from your group again");
+  } else {
+    ctx.deleteMessage();
+    chatId = ctx.chat.id;
+    User.find({ chatId }, (error, data) => {
+      if (error) {
+        console.log(error);
+      } else {
+        if (data[0].mImage == "Not Set") {
+          bot.telegram.sendMessage(ctx.chat.id, `No Image Saved`, {
+            reply_markup: {
+              inline_keyboard: [
+                [{ text: ">>back", callback_data: "tsetting" }],
+              ],
+            },
+          });
+        } else {
+          bot.telegram.sendPhoto(ctx.chat.id, `${data[0].mImage}`, {
+            reply_markup: {
+              inline_keyboard: [
+                [{ text: ">>back", callback_data: "tsetting" }],
+              ],
+            },
+          });
+        }
+      }
+    });
+  }
+});
+
+// Telegram Link Update and Edit
+
+bot.action("tele", function (ctx) {
+  if (mainId[0] == undefined) {
+    return ctx.reply("Click The Link from your group again");
+  } else {
+    ctx.deleteMessage();
+    const chatId = ctx.chat.id;
+    User.find({ chatId }, (error, data) => {
+      if (error) {
+        console.log(error);
       } else {
         bot.telegram.sendMessage(ctx.chat.id, "What do you want to do", {
           reply_markup: {
             inline_keyboard: [
               [
                 {
-                  text: "View Already Saved Image",
-                  callback_data: `viewImage`,
+                  text: "Current Link",
+                  callback_data: `currentLink`,
                 },
               ],
               [
                 {
-                  text: "Change Image",
-                  callback_data: `mImageChange`,
+                  text: "Update Link",
+                  callback_data: `updateTele`,
                 },
               ],
             ],
           },
         });
       }
-    }
-  });
-});
-
-bot.action("viewImage", (ctx) => {
-  ctx.deleteMessage();
-  chatId = ctx.chat.id;
-  User.find({ chatId }, (error, data) => {
-    if (error) {
-      console.log(error);
-    } else {
-      if (data[0].mImage == "Not Set") {
-        bot.telegram.sendMessage(ctx.chat.id, `No Image Saved`, {
-          reply_markup: {
-            inline_keyboard: [[{ text: ">>back", callback_data: "tsetting" }]],
-          },
-        });
-      } else {
-        bot.telegram.sendPhoto(ctx.chat.id, `${data[0].mImage}`, {
-          reply_markup: {
-            inline_keyboard: [[{ text: ">>back", callback_data: "tsetting" }]],
-          },
-        });
-      }
-    }
-  });
-});
-
-// Telegram Link Update and Edit
-
-bot.action("tele", function (ctx) {
-  ctx.deleteMessage();
-  const chatId = ctx.chat.id;
-  User.find({ chatId }, (error, data) => {
-    if (error) {
-      console.log(error);
-    } else {
-      bot.telegram.sendMessage(ctx.chat.id, "What do you want to do", {
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: "Current Link",
-                callback_data: `currentLink`,
-              },
-            ],
-            [
-              {
-                text: "Update Link",
-                callback_data: `updateTele`,
-              },
-            ],
-          ],
-        },
-      });
-    }
-  });
+    });
+  }
 });
 
 bot.action("currentLink", (ctx) => {
-  ctx.deleteMessage();
-  chatId = ctx.chat.id;
-  User.find({ chatId }, (error, data) => {
-    if (error) {
-      console.log(error);
-    } else {
-      if (data[0].telegram == "Not Set") {
-        ctx.reply("No Link saved yet");
+  if (mainId[0] == undefined) {
+    return ctx.reply("Click The Link from your group again");
+  } else {
+    ctx.deleteMessage();
+    chatId = ctx.chat.id;
+    User.find({ chatId }, (error, data) => {
+      if (error) {
+        console.log(error);
       } else {
-        ctx.reply(`Your link is: ${data[0].telegram}`);
+        if (data[0].telegram == "Not Set") {
+          ctx.reply("No Link saved yet");
+        } else {
+          ctx.reply(`Your link is: ${data[0].telegram}`);
+        }
       }
-    }
-  });
+    });
+  }
 });
 
 //Token Delete
 bot.action("tokenDelete", function (ctx) {
-  ctx.deleteMessage();
-  const chatId = ctx.chat.id;
-  User.find({ chatId }, (error, data) => {
-    if (error) {
-      ctx.reply("Error getting user");
-    } else {
-      console.log(data[0].ethAddress);
-      let toks = data[0].ethAddress;
-      User.findOneAndDelete(
-        { chatId },
+  if (mainId[0] == undefined) {
+    return ctx.reply("Click The Link from your group again");
+  } else {
+    ctx.deleteMessage();
+    const chatId = ctx.chat.id;
+    User.find({ chatId }, (error, data) => {
+      if (error) {
+        ctx.reply("Error getting user");
+      } else {
+        console.log(data[0].ethAddress);
+        let toks = data[0].ethAddress;
+        User.findOneAndDelete(
+          { chatId },
 
-        { toks },
+          { toks },
 
-        (error, data) => {
-          if (error) {
-            ctx.reply("error");
-          } else {
-            ctx.reply("Deleted Successfully");
+          (error, data) => {
+            if (error) {
+              ctx.reply("error");
+            } else {
+              ctx.reply("Deleted Successfully");
+            }
           }
-        }
-      );
-    }
-  });
+        );
+      }
+    });
+  }
 });
 
 //ETH  Scene
 
 bot.action("eth", function (ctx) {
-  ctx.deleteMessage();
-  bot.telegram.sendMessage(ctx.chat.id, text.token, {
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: "Uniswap",
-            callback_data: "e-Uniswap",
-          },
-          {
-            text: "Pancakeswap",
-            callback_data: "e-Pancakeswap",
-          },
+  if (mainId[0] == undefined) {
+    return ctx.reply("Click The Link from your group again");
+  } else {
+    ctx.deleteMessage();
+    bot.telegram.sendMessage(ctx.chat.id, text.token, {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "Uniswap",
+              callback_data: "e-Uniswap",
+            },
+            {
+              text: "Pancakeswap",
+              callback_data: "e-Pancakeswap",
+            },
+          ],
+          [
+            {
+              text: "Uniswap v3",
+              callback_data: "e-UniswapV3",
+            },
+            {
+              text: "biswap",
+              callback_data: "e-Biswap",
+            },
+          ],
+          [
+            {
+              text: "Sushiswap",
+              callback_data: "e-Sushiswap",
+            },
+            {
+              text: "pyeswap",
+              callback_data: "e-Pyeswap",
+            },
+          ],
+          [
+            {
+              text: "shibaswap",
+              callback_data: "e-Shibaswap",
+            },
+            {
+              text: "busta",
+              callback_data: "e-Busta",
+            },
+          ],
+          [
+            {
+              text: ">>cancel",
+              callback_data: "cancel",
+            },
+            {
+              text: ">>cancel",
+              callback_data: "cancel",
+            },
+          ],
         ],
-        [
-          {
-            text: "Uniswap v3",
-            callback_data: "e-UniswapV3",
-          },
-          {
-            text: "biswap",
-            callback_data: "e-Biswap",
-          },
-        ],
-        [
-          {
-            text: "Sushiswap",
-            callback_data: "e-Sushiswap",
-          },
-          {
-            text: "pyeswap",
-            callback_data: "e-Pyeswap",
-          },
-        ],
-        [
-          {
-            text: "shibaswap",
-            callback_data: "e-Shibaswap",
-          },
-          {
-            text: "busta",
-            callback_data: "e-Busta",
-          },
-        ],
-        [
-          {
-            text: ">>cancel",
-            callback_data: "cancel",
-          },
-          {
-            text: ">>cancel",
-            callback_data: "cancel",
-          },
-        ],
-      ],
-    },
-  });
+      },
+    });
+  }
 });
 let ethList = [
   "e-Uniswap",
