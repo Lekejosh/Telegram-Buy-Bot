@@ -63,13 +63,25 @@ bot.catch((err, ctx) => {
 
 bot.command("addtoken", async (ctx, next) => {
   if (ctx.from._is_in_admin_list) {
+    let admi = ctx.update.message.chat._admins;
+    console.log(ctx.chat.id);
+    console.log(admi);
     await User.findOne({ chatId: ctx.chat.id }).then((user) => {
       if (user) {
-        console.log(ctx);
-        console.log(ctx.chat.type);
-        console.log(ctx.update);
-        console.log("chat=>", ctx.update.message.chat._admins);
-        console.log("from=>", ctx.update.message.from);
+        Group.findOne({ chatId: ctx.chat.id }, (error, doc) => {
+          if (error) {
+            console.log(error);
+          } else {
+            doc.updateOne({ $set: { adminList: admi } }, (error, ree) => {
+              if (error) {
+                console.log(error);
+              } else {
+                console.log("New=>", ree);
+              }
+            });
+            console.log(doc);
+          }
+        });
         next();
       } else {
         User.create({
@@ -83,7 +95,6 @@ bot.command("addtoken", async (ctx, next) => {
           timeStamp: "0000000",
         }).then((neww) => {
           console.log(neww);
-          let admi = ctx.update.message.chat._admins;
 
           Group.create({
             chatId: ctx.chat.id,
@@ -121,6 +132,15 @@ bot.command("addtoken", async (ctx, next) => {
   }
 });
 
+bot.hears(["/addtoken", "/settings"], (ctx) => {
+  if (ctx.chat.id > 0) {
+    bot.telegram.sendMessage(ctx.chat.id, text.chatStart, {
+      parse_mode: "HTML",
+      disable_web_page_preview: true,
+    });
+  }
+});
+
 bot.hears(/\/start(.*)/, (msg, match, ctx) => {
   let upd = msg.match.input.split(" ");
   mainId.push(upd[1]);
@@ -146,23 +166,35 @@ bot.hears(/\/start(.*)/, (msg, match, ctx) => {
                 }
               );
             } else {
-              bot.telegram.sendMessage(
-                msg.update.message.from.id,
-                text.setting,
-                {
-                  reply_markup: {
-                    inline_keyboard: [
-                      [
-                        {
-                          text: "Add Token",
-                          callback_data: "add",
-                        },
+              console.log(data.adminList[0].status);
+              console.log(data.adminList[0].can_promote_members);
+              if (
+                data.adminList[0].status == "creator" ||
+                data.adminList[0].can_promote_members == true
+              ) {
+                bot.telegram.sendMessage(
+                  msg.update.message.from.id,
+                  text.setting,
+                  {
+                    reply_markup: {
+                      inline_keyboard: [
+                        [
+                          {
+                            text: "Add Token",
+                            callback_data: "add",
+                          },
+                        ],
+                        [{ text: "Token Setting", callback_data: "setting" }],
                       ],
-                      [{ text: "Token Setting", callback_data: "setting" }],
-                    ],
-                  },
-                }
-              );
+                    },
+                  }
+                );
+              } else {
+                bot.telegram.sendMessage(
+                  msg.update.message.from.id,
+                  "You can't access this... Tell the Group creator to enable you 'Add new Admins', Then send '/addtoken' to the bot in the group"
+                );
+              }
             }
           }
         });
@@ -170,13 +202,13 @@ bot.hears(/\/start(.*)/, (msg, match, ctx) => {
     }
   );
 
-  console.log(msg);
-  console.log(match);
+  // console.log(msg);
+  // console.log(match);
 
-  console.log(upd[1]);
-  console.log(msg.update);
-  console.log("chat", msg.update.message.chat);
-  console.log("from", msg.update.message.from);
+  // console.log(upd[1]);
+  // console.log(msg.update);
+  // console.log("chat", msg.update.message.chat);
+  // console.log("from", msg.update.message.from);
 });
 
 // bot.action("plus", function (ctx) {
