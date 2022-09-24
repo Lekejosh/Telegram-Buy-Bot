@@ -211,26 +211,6 @@ bot.hears(/\/start(.*)/, (msg, match, ctx) => {
   // console.log("from", msg.update.message.from);
 });
 
-// bot.action("plus", function (ctx) {
-//   if (ctx.from._is_in_admin_list) {
-//     bot.telegram.sendMessage(ctx.chat.id, text.setting, {
-//       reply_markup: {
-//         inline_keyboard: [
-//           [
-//             {
-//               text: "Add Token",
-//               callback_data: "add",
-//             },
-//           ],
-//           [{ text: "Token Setting", callback_data: "setting" }],
-//         ],
-//       },
-//     });
-//   } else {
-//     return;
-//   }
-// });
-
 //Token Add function
 
 bot.action("add", function (ctx) {
