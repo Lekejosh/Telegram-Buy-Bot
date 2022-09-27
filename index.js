@@ -59,7 +59,7 @@ bot.catch((err, ctx) => {
 
 //Token add and Database Save
 
-bot.command(["addtoken", "settings"], async (ctx, next) => {
+bot.command(["addtoken", "buildsettings"], async (ctx, next) => {
   if (ctx.from._is_in_admin_list) {
     let admi = ctx.update.message.chat._admins;
     groupNameee.push(ctx.chat.title);
@@ -133,7 +133,7 @@ bot.command(["addtoken", "settings"], async (ctx, next) => {
 });
 
 // hears{/addtoken, /settings}
-bot.hears(["/addtoken", "/settings"], (ctx) => {
+bot.hears(["/addtoken", "/settings", "/buildsettings"], (ctx) => {
   if (ctx.chat.id > 0) {
     bot.telegram.sendMessage(ctx.chat.id, text.chatStart, {
       parse_mode: "HTML",
@@ -493,13 +493,13 @@ bot.action("tele", function (ctx) {
             inline_keyboard: [
               [
                 {
-                  text: "Current Link",
+                  text: "View Current Link",
                   callback_data: `currentLink`,
                 },
               ],
               [
                 {
-                  text: "Update Link",
+                  text: "Add/Update Link",
                   callback_data: `updateTele`,
                 },
               ],
