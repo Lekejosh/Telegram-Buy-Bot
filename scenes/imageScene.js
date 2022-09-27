@@ -12,6 +12,10 @@ const step1 = (ctx) => {
 const step2 = new Composer();
 
 step2.on("photo", (ctx) => {
+   if(ctx?.message?.photo == undefined){
+    ctx.reply("Please send a photo... Note you can't send a or Document or a Document as a photo")
+      ctx.scene.leave();
+    }else{
   let photos = ctx.message.photo;
   const { file_id: fileId } = photos[0];
   console.log(fileId);
@@ -41,6 +45,7 @@ step2.on("photo", (ctx) => {
     }
   );
   return ctx.scene.leave();
+    }
 });
 
 const imageScene = new WizardScene("imageScene", (ctx) => step1(ctx), step2);
