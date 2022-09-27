@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
   mEnable: { type: Boolean },
   mImage: { type: String },
   timeStamp: { type: Number },
+  hash: { type: String },
 });
 const User = mongoose.model("user", userSchema);
 

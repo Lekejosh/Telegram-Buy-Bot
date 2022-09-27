@@ -14,13 +14,14 @@ const { Scenes, Composer } = require("telegraf");
 const WizardScene = require("telegraf/scenes/wizard");
 const bot = new Telegraf("5561811963:AAFV83oL535KmiZOHwkSIybgiwmoCAxUCxQ");
 // 5561811963:AAFV83oL535KmiZOHwkSIybgiwmoCAxUCxQ
-const imageScene = require("./scenes/imageScene.js").imageScene;
+// const imageScene = require("./scenes/imageScene.js").imageScene;
 // //Transaction RObot Instance
 const instance = new Robot(bot);
 const errorMiddleware = require("./error/error");
 const ErrorMiddleware = require("./error/errorHandler");
 const catchAsyncErrors = require("./error/catchAsyncErrors");
 const mainId = [];
+const groupNameee = [];
 // Bot alert interval
 setInterval(async () => {
   try {
@@ -29,7 +30,7 @@ setInterval(async () => {
     console.error(error);
     return;
   }
-}, 30000);
+}, 15000);
 
 // Session start
 
@@ -61,6 +62,7 @@ bot.catch((err, ctx) => {
 bot.command(["addtoken", "settings"], async (ctx, next) => {
   if (ctx.from._is_in_admin_list) {
     let admi = ctx.update.message.chat._admins;
+    groupNameee.push(ctx.chat.title);
     console.log(ctx.chat.id);
     console.log(admi);
     await User.findOne({ chatId: ctx.chat.id }).then((user) => {
@@ -87,12 +89,12 @@ bot.command(["addtoken", "settings"], async (ctx, next) => {
           cSupply: "100000000000000000",
           emoji: "Not Set",
           mEnable: false,
-
           mImage: "Not Set",
           timeStamp: "0000000",
+          hash: "nill",
         }).then((neww) => {
           console.log(neww);
-
+          groupNameee.push(ctx.chat.title);
           Group.create({
             chatId: ctx.chat.id,
             groupName: ctx.chat.title,
@@ -144,7 +146,7 @@ bot.hears(/\/start(.*)/, (msg, match) => {
   console.log(msg.update.update_id);
 
   let upd = msg.match.input.split(" ");
-  mainId.unshift(upd[1]);
+  mainId.push(upd[1]);
   let chatId = upd[1];
   Group.findOne(
     { chatId },
@@ -237,7 +239,7 @@ bot.action("add", function (ctx) {
         ) {
           bot.telegram.sendMessage(
             ctx.chat.id,
-            text.set + " " + `${ctx.chat.title}`,
+            text.set + " " + `${groupNameee[0]}`,
             {
               reply_markup: {
                 inline_keyboard: [
@@ -378,12 +380,7 @@ bot.action("tsetting", function (ctx) {
                   callback_data: "mImages",
                 },
               ],
-              [
-                {
-                  text: "Delete This Token",
-                  callback_data: "tokenDelete",
-                },
-              ],
+
               [
                 {
                   text: "Save Token settings",
@@ -452,7 +449,6 @@ bot.action("viewImage", (ctx) => {
   if (mainId[0] == undefined) {
     return ctx.reply("Click The Link from your group again");
   } else {
-    ctx.deleteMessage();
     chatId = mainId[0];
     User.find({ chatId }, (error, data) => {
       if (error) {
@@ -536,35 +532,33 @@ bot.action("currentLink", (ctx) => {
 });
 
 //Token Delete
-bot.action("tokenDelete", function (ctx) {
-  if (mainId[0] == undefined) {
-    return ctx.reply("Click The Link from your group again");
-  } else {
-    ctx.deleteMessage();
-    const chatId = mainId[0];
-    User.find({ chatId }, (error, data) => {
-      if (error) {
-        ctx.reply("Error getting user");
-      } else {
-        console.log(data[0].ethAddress);
-        let toks = data[0].ethAddress;
-        User.findOneAndDelete(
-          { chatId },
+// bot.action("tokenDelete", function (ctx) {
+//   if (mainId[0] == undefined) {
+//     return ctx.reply("Click The Link from your group again");
+//   } else {
+//     ctx.deleteMessage();
+//     const chatId = mainId[0];
+//     User.find({ chatId }, (error, data) => {
+//       if (error) {
+//         ctx.reply("Error getting user");
+//       } else {
+//         console.log(data[0].ethAddress);
+//         let toks = data[0].ethAddress;
+//         User.findOneAndDelete(
+//           { toks },
 
-          { toks },
-
-          (error, data) => {
-            if (error) {
-              ctx.reply("error");
-            } else {
-              ctx.reply("Deleted Successfully");
-            }
-          }
-        );
-      }
-    });
-  }
-});
+//           (error, data) => {
+//             if (error) {
+//               ctx.reply("error");
+//             } else {
+//               ctx.reply("Deleted Successfully");
+//             }
+//           }
+//         );
+//       }
+//     });
+//   }
+// });
 
 //ETH  Scene
 
@@ -582,8 +576,8 @@ bot.action("eth", function (ctx) {
               callback_data: "e-Uniswap",
             },
             {
-              text: "Pancakeswap",
-              callback_data: "e-Pancakeswap",
+              text: "Shibaswap",
+              callback_data: "e-Shibaswap",
             },
           ],
           [
@@ -592,30 +586,11 @@ bot.action("eth", function (ctx) {
               callback_data: "e-UniswapV3",
             },
             {
-              text: "biswap",
-              callback_data: "e-Biswap",
-            },
-          ],
-          [
-            {
               text: "Sushiswap",
               callback_data: "e-Sushiswap",
             },
-            {
-              text: "pyeswap",
-              callback_data: "e-Pyeswap",
-            },
           ],
-          [
-            {
-              text: "shibaswap",
-              callback_data: "e-Shibaswap",
-            },
-            {
-              text: "busta",
-              callback_data: "e-Busta",
-            },
-          ],
+
           [
             {
               text: ">>cancel",
@@ -631,14 +606,7 @@ bot.action("eth", function (ctx) {
     });
   }
 });
-let ethList = [
-  "e-Uniswap",
-  "e-Pancakeswap",
-  "e-UniswapV3",
-  "e-Biswap",
-  "e-Sushiswap",
-  "e-Busta",
-];
+let ethList = ["e-Uniswap", "e-UniswapV3", "e-Sushiswap", "e-Shibaswap"];
 
 // Token Stage
 const tokenVerify = new WizardScene(
@@ -677,22 +645,18 @@ const tokenVerify = new WizardScene(
             ).then((neww) => {
               console.log(neww);
             });
-            bot.telegram.sendMessage(
-              ctx.chat.id,
-              `Token found\n Tap to set alert info`,
-              {
-                reply_markup: {
-                  inline_keyboard: [
-                    [
-                      {
-                        text: `${pairs[0].baseToken.symbol}/${pairs[0].quoteToken.symbol} \n\n ${pairs[0].baseToken.address}`,
-                        callback_data: "tsetting",
-                      },
-                    ],
+            bot.telegram.sendMessage(ctx.chat.id, `Token found\n Tap to save`, {
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    {
+                      text: `${pairs[0].baseToken.symbol}/${pairs[0].quoteToken.symbol} \n\n ${pairs[0].pairAddress}`,
+                      callback_data: "tsave",
+                    },
                   ],
-                },
-              }
-            );
+                ],
+              },
+            });
           }
         })
 
@@ -701,7 +665,57 @@ const tokenVerify = new WizardScene(
     }
   }
 );
+// const imageScene = new WizardScene("imageScene",
 
+const step1 = (ctx) => {
+  ctx.reply(
+    "Be sure when sending image, it is sent with compression(if you're using a PC)"
+  );
+  console.log("main Id", mainId);
+  return ctx.wizard.next();
+};
+
+const step2 = new Composer();
+
+step2.on(["photo", "document"], (ctx) => {
+  if (ctx.update.message.document) {
+    ctx.reply(
+      "Image invalid! Please send image as 'Photo' and not a 'File'. Try again"
+    );
+  } else {
+    let photos = ctx.message.photo;
+    const { file_id: fileId } = photos[0];
+    console.log(fileId);
+    const chatId = mainId[0];
+    User.findOneAndUpdate(
+      { chatId },
+      {
+        mImage: `${fileId}`,
+      },
+      (error, data) => {
+        if (error) {
+          console.log(error);
+        } else {
+          bot.telegram.sendMessage(ctx.chat.id, "Done", {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: `>>Back`,
+                    callback_data: "tsetting",
+                  },
+                ],
+              ],
+            },
+          });
+        }
+      }
+    );
+    return ctx.scene.leave();
+  }
+});
+
+const imageScene = new WizardScene("imageScene", (ctx) => step1(ctx), step2);
 // Setting Scences
 
 const telegramLink = new WizardScene(
@@ -998,6 +1012,12 @@ bot.action("save", (ctx) => {
   ctx.deleteMessage();
   ctx.reply("Saved");
 });
+bot.action("tsave", (ctx) => {
+  ctx.deleteMessage();
+  ctx.reply(
+    "Token Successfully added. To change settings please click on the link from within your Telegram group."
+  );
+});
 
 //DB connect and Bot launch
 
@@ -1018,3 +1038,5 @@ const init = async () => {
 };
 
 init();
+
+module.exports = { mainId };
