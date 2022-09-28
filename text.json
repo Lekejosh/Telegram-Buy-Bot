@@ -6,6 +6,6 @@
   "set": "Hello! \n Please choose the network the token you are adding resides on for the",
   "token": "Great! \n What ETH DEX is your token on?",
   "selection": "You chose",
-  "selectionContd": ".\nPlease paste the TOKEN address of the token you would like BuildGr33n Buy Bot to track.",
+  "selectionContd": ".\nPlease paste the TOKEN address of the token you would like BuildGr33nBuyBot to track.",
   "setToken": "Successfully added ~Token Name~ to ~Telegram Group Name~.\nPlease update each of the settings below to suit your needs. If you want to change any, simply\nclick on the applicable button.\nToken Name: \nToken Address: \nPair Address:"
 }

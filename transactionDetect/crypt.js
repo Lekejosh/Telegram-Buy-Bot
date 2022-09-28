@@ -12,6 +12,7 @@ const Temoji = [];
 const Tele = [];
 const Clock = [];
 const Thash = [];
+const stepp = [];
 class transaction {
   // constructor() {
   //   this.transaction = {};
@@ -30,6 +31,7 @@ class transaction {
       Tname.push(user[i].ethAddress.name);
       Temoji.push(user[i].emoji);
       Tele.push(user[i].telegram);
+      stepp.push(user[i].step);
       Clock.unshift(user[i].timeStamp);
       Thash.unshift(user[i].hash);
     }
@@ -59,15 +61,16 @@ class transaction {
             `https://api.unmarshal.com/v2/ethereum/address/${lastpair}/transactions?page=1&pageSize=10&contract=string&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
           );
           const val = await axios.get(
-            `https://api.unmarshal.com/v1/ethereum/address/${res.data.transactions[0].from}/assets?verified=true&chainId=false&token=false&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
+            `https://api.unmarshal.com/v1/ethereum/address/${vall.data.transactions[0].from}/assets?verified=true&chainId=false&token=false&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
           );
 
           const coun = await axios.get(
-            `https://api.unmarshal.com/v2/ethereum/address/${res.data.transactions[0].from}/transactions?page=1&pageSize=5&contract=${lastToken}&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
+            `https://api.unmarshal.com/v2/ethereum/address/${vall.data.transactions[0].from}/transactions?page=1&pageSize=5&contract=${lastToken}&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
           );
           const priceS = await axios.get(
             `https://api.unmarshal.com/v1/pricestore/chain/ethereum/${lastToken}?timestamp=${vall.data.transactions[0].date}&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
           );
+          const supplyS = await axios.get(services.supply);
           const conversion = await axios.get(
             "https://pro-api.coinmarketcap.com/v2/tools/price-conversion?amount=1&symbol=ETH",
             {
@@ -77,9 +80,9 @@ class transaction {
             }
           );
           const buyerTBalance = await axios.get(
-            `https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${lastToken}&address=${res.data.transactions[0].from}&tag=latest&apikey=112R9MIZ97GI3M7UBVNAR34HYIGEW4RK8W`
+            `https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${lastToken}&address=${vall.data.transactions[0].from}&tag=latest&apikey=112R9MIZ97GI3M7UBVNAR34HYIGEW4RK8W`
           );
-          const supplyS = await axios.get(services.supply);
+          
           await axios
             .all([
               res,
@@ -147,24 +150,26 @@ class transaction {
                           let value2 = Number(sent[1].value);
                           let sum = value1 / 10 ** 18 + value2 / 10 ** 18;
                           let sumation = Number(sum);
-                          let realSum = sumation
-                            .toFixed(2)
-                            .toLocaleString("fullwide");
-                          let spentUsd = (sumation * price)
-                            .toFixed(2)
-                            .toLocaleString("fullwide", {
-                              useGrouping: false,
-                            });
+                          let realSum = sumation.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                          });
+                          let spentUsd = (sumation * price).toLocaleString(
+                            undefined,
+                            { maximumFractionDigits: 2 }
+                          );
+                          console.log(buyerBal)
                           let buyerBalCon = Number(buyerBal) / 10 ** 18;
 
                           let walletVal = balance / 10 ** 18;
                           let ethWalletVal = walletVal.toFixed(5);
                           let spentEth = (spentUsd / ethValue).toFixed(5);
                           let mcap = price * total_supply;
+                          let stepVal = spentUsd;
+                          let stepEVal = Math.floor(stepVal / stepp[0]);
 
-                          let mcapSum = Number(mcap)
-                            .toFixed(2)
-                            .toLocaleString("fullwide");
+                          let mcapSum = Number(mcap).toLocaleString(undefined, {
+                            maximumFractionDigits: 2,
+                          });
                           let mcapfin = mcapSum;
                           console.log("Working Now...");
                           let buyerPOS = (sumation / buyerBalCon) * 100;
@@ -175,27 +180,28 @@ class transaction {
                             if (whaleee == undefined) {
                               callback(
                                 ` 
-                            <b>${lastTname} Buy</b>\n${lastTemoji}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
+                            <b>${lastTname} Buy</b>\n${lastTemoji.repeat(
+                                  stepEVal
+                                )}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
                                   sent[0].symbol
-                                }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote
-                                  .toFixed(2)
-                                  .toFixed(2)
-                                  .toLocaleString("fullwide", {
-                                    useGrouping: false,
-                                  })} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b> 1\n<b>Price</b>:$${priceNum.toFixed(
+                                }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
+                                  undefined,
+                                  { maximumFractionDigits: 2 }
+                                )} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b> 1\n<b>Price</b>:$${priceNum.toFixed(
                                   12
                                 )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: Not A Whale\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${lastpair}"><b>Chart</b></a> |  <a href="${lastTele}"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
                               );
                             } else {
                               callback(
                                 ` 
-                            <b>${lastTname} Buy</b>\n${lastTemoji}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
+                            <b>${lastTname} Buy</b>\n${lastTemoji.repeat(
+                                  stepEVal
+                                )}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
                                   sent[0].symbol
-                                }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote
-                                  .toFixed(2)
-                                  .toLocaleString("fullwide", {
-                                    useGrouping: false,
-                                  })} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b> 1\n<b>Price</b>:$${priceNum.toFixed(
+                                }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
+                                  undefined,
+                                  { maximumFractionDigits: 2 }
+                                )} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b> 1\n<b>Price</b>:$${priceNum.toFixed(
                                   12
                                 )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: ${machala} 🐋\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${lastpair}"><b>Chart</b></a> |  <a href="${lastTele}"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
                               );
@@ -205,13 +211,14 @@ class transaction {
                             if (whaleee == undefined) {
                               callback(
                                 `
-                            <b>${ContractName} Buy</b>\n${lastTemoji}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH)\n<b>Got</b>: ${realSum} ${
+                            <b>${ContractName} Buy</b>\n${lastTemoji.repeat(
+                                  stepEVal
+                                )}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH)\n<b>Got</b>: ${realSum} ${
                                   sent[0].symbol
-                                }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote
-                                  .toFixed(2)
-                                  .toLocaleString("fullwide", {
-                                    useGrouping: false,
-                                  })} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
+                                }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
+                                  undefined,
+                                  { maximumFractionDigits: 2 }
+                                )} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
                                   2
                                 )}% ⬆ \n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                                   12
@@ -220,13 +227,14 @@ class transaction {
                             } else {
                               callback(
                                 `
-                            <b>${ContractName} Buy</b>\n${lastTemoji}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH)\n<b>Got</b>: ${realSum} ${
+                            <b>${ContractName} Buy</b>\n${lastTemoji.repeat(
+                                  stepEVal
+                                )}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH)\n<b>Got</b>: ${realSum} ${
                                   sent[0].symbol
-                                }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote
-                                  .toFixed(2)
-                                  .toLocaleString("fullwide", {
-                                    useGrouping: false,
-                                  })} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
+                                }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
+                                  undefined,
+                                  { maximumFractionDigits: 2 }
+                                )} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
                                   2
                                 )}% ⬆ \n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                                   12
@@ -238,13 +246,14 @@ class transaction {
                             if (whaleee == undefined) {
                               callback(
                                 `
-                            <b>${ContractName} Buy</b>\n${lastTemoji}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
+                            <b>${ContractName} Buy</b>\n${lastTemoji.repeat(
+                                  stepEVal
+                                )}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
                                   sent[0].symbol
-                                }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote
-                                  .toFixed(2)
-                                  .toLocaleString("fullwide", {
-                                    useGrouping: false,
-                                  })} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
+                                }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
+                                  undefined,
+                                  { maximumFractionDigits: 2 }
+                                )} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
                                   2
                                 )}% ⬆\n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                                   12
@@ -253,13 +262,14 @@ class transaction {
                             } else {
                               callback(
                                 `
-                            <b>${ContractName} Buy</b>\n${lastTemoji}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
+                            <b>${ContractName} Buy</b>\n${lastTemoji.repeat(
+                                  stepEVal
+                                )}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
                                   sent[0].symbol
-                                }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote
-                                  .toFixed(2)
-                                  .toLocaleString("fullwide", {
-                                    useGrouping: false,
-                                  })} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
+                                }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
+                                  undefined,
+                                  { maximumFractionDigits: 2 }
+                                )} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
                                   2
                                 )}% ⬆\n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                                   12
@@ -316,7 +326,7 @@ class transaction {
           );
 
           const coun = await axios.get(
-            `https://api.unmarshal.com/v2/ethereum/address/${res.data.transactions[0].from}/transactions?page=1&pageSize=5&contract=${token[0]}&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
+            `https://api.unmarshal.com/v2/ethereum/address/${vall.data.transactions[0].from}/transactions?page=1&pageSize=5&contract=${token[0]}&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
           );
           const priceS = await axios.get(
             `https://api.unmarshal.com/v1/pricestore/chain/ethereum/${token[0]}?timestamp=${vall.data.transactions[0].date}&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
@@ -330,7 +340,7 @@ class transaction {
             }
           );
           const buyerTBalance = await axios.get(
-            `https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${token[0]}&address=${res.data.transactions[0].from}&tag=latest&apikey=112R9MIZ97GI3M7UBVNAR34HYIGEW4RK8W`
+            `https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${token[0]}&address=${vall.data.transactions[0].from}&tag=latest&apikey=112R9MIZ97GI3M7UBVNAR34HYIGEW4RK8W`
           );
           const supplyS = await axios.get(services.supply);
           await axios
@@ -353,15 +363,6 @@ class transaction {
                   responses[2].data.transactions[0] || {};
                 const ball = responses[3].data;
 
-                // let arrr = [7, 8];
-                // let lastElement1 = arrr[arrr.length - 1];
-                // let secondtoLast = arrr[arrr.length - 2];
-                // let third = arrr[arrr.length - 3];
-
-                // console.log(arrr.length);
-                // console.log("Thelast elemenet =>", lastElement1);
-                // console.log("The Second elemenet =>", secondtoLast);
-                // console.log("Thired=>", third);
 
                 let ethBal = ball.find((o) => o.contract_name === "Ethereum");
 
@@ -412,24 +413,25 @@ class transaction {
                           let value2 = Number(sent[1].value);
                           let sum = value1 / 10 ** 18 + value2 / 10 ** 18;
                           let sumation = Number(sum);
-                          let realSum = sumation
-                            .toFixed(2)
-                            .toLocaleString("fullwide");
-                          let spentUsd = (sumation * price)
-                            .toFixed(2)
-                            .toLocaleString("fullwide", {
-                              useGrouping: false,
-                            });
+                          let realSum = sumation.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                          });
+                          let spentUsd = (sumation * price).toLocaleString(
+                            undefined,
+                            { maximumFractionDigits: 2 }
+                          );
                           let buyerBalCon = Number(buyerBal) / 10 ** 18;
 
                           let walletVal = balance / 10 ** 18;
                           let ethWalletVal = walletVal.toFixed(5);
                           let spentEth = (spentUsd / ethValue).toFixed(5);
                           let mcap = price * total_supply;
+                          let stepVal = spentUsd;
+                          let stepEVal = Math.floor(stepVal / stepp[0]);
 
-                          let mcapSum = Number(mcap)
-                            .toFixed(2)
-                            .toLocaleString("fullwide");
+                          let mcapSum = Number(mcap).toLocaleString(undefined, {
+                            maximumFractionDigits: 2,
+                          });
                           let mcapfin = mcapSum;
                           console.log("Working Now...");
                           let buyerPOS = (sumation / buyerBalCon) * 100;
@@ -449,15 +451,16 @@ class transaction {
                               if (whaleee == undefined) {
                                 callback(
                                   ` 
-                            <b>${Tname[0]} Buy</b>\n${
-                                    Temoji[0]
-                                  }\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
+                            <b>${Tname[0]} Buy</b>\n${Temoji[0].repeat(
+                                    stepEVal
+                                  )}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
                                     sent[0].symbol
-                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote
-                                    .toFixed(2)
-                                    .toLocaleString("fullwide", {
-                                      useGrouping: false,
-                                    })} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b> 1\n<b>Price</b>:$${priceNum.toFixed(
+                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
+                                    undefined,
+                                    {
+                                      maximumFractionDigits: 2,
+                                    }
+                                  )} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b> 1\n<b>Price</b>:$${priceNum.toFixed(
                                     12
                                   )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: Not A Whale\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${
                                     pair[0]
@@ -468,15 +471,16 @@ class transaction {
                               } else {
                                 callback(
                                   ` 
-                            <b>${Tname[0]} Buy</b>\n${
-                                    Temoji[0]
-                                  }\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
+                            <b>${Tname[0]} Buy</b>\n${Temoji[0].repeat(
+                                    stepEVal
+                                  )}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
                                     sent[0].symbol
-                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote
-                                    .toFixed(2)
-                                    .toLocaleString("fullwide", {
-                                      useGrouping: false,
-                                    })} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b> 1\n<b>Price</b>:$${priceNum.toFixed(
+                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
+                                    undefined,
+                                    {
+                                      maximumFractionDigits: 2,
+                                    }
+                                  )} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b> 1\n<b>Price</b>:$${priceNum.toFixed(
                                     12
                                   )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: ${machala} 🐋\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${
                                     pair[0]
@@ -490,15 +494,16 @@ class transaction {
                               if (whaleee == undefined) {
                                 callback(
                                   `
-                            <b>${ContractName} Buy</b>\n${
-                                    Temoji[0]
-                                  }\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH)\n<b>Got</b>: ${realSum} ${
+                            <b>${ContractName} Buy</b>\n${Temoji[0].repeat(
+                                    stepEVal
+                                  )}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH)\n<b>Got</b>: ${realSum} ${
                                     sent[0].symbol
-                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote
-                                    .toFixed(2)
-                                    .toLocaleString("fullwide", {
-                                      useGrouping: false,
-                                    })} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
+                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
+                                    undefined,
+                                    {
+                                      maximumFractionDigits: 2,
+                                    }
+                                  )} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
                                     2
                                   )}% ⬆ \n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                                     12
@@ -511,15 +516,16 @@ class transaction {
                               } else {
                                 callback(
                                   `
-                            <b>${ContractName} Buy</b>\n${
-                                    Temoji[0]
-                                  }\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH)\n<b>Got</b>: ${realSum} ${
+                            <b>${ContractName} Buy</b>\n${Temoji[0].repeat(
+                                    stepEVal
+                                  )}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH)\n<b>Got</b>: ${realSum} ${
                                     sent[0].symbol
-                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote
-                                    .toFixed(2)
-                                    .toLocaleString("fullwide", {
-                                      useGrouping: false,
-                                    })} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
+                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
+                                    undefined,
+                                    {
+                                      maximumFractionDigits: 2,
+                                    }
+                                  )} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
                                     2
                                   )}% ⬆ \n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                                     12
@@ -535,15 +541,16 @@ class transaction {
                               if (whaleee == undefined) {
                                 callback(
                                   `
-                            <b>${ContractName} Buy</b>\n${
-                                    Temoji[0]
-                                  }\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
+                            <b>${ContractName} Buy</b>\n${Temoji[0].repeat(
+                                    stepEVal
+                                  )}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
                                     sent[0].symbol
-                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote
-                                    .toFixed(2)
-                                    .toLocaleString("fullwide", {
-                                      useGrouping: false,
-                                    })} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
+                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
+                                    undefined,
+                                    {
+                                      maximumFractionDigits: 2,
+                                    }
+                                  )} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
                                     2
                                   )}% ⬆\n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                                     12
@@ -556,15 +563,16 @@ class transaction {
                               } else {
                                 callback(
                                   `
-                            <b>${ContractName} Buy</b>\n${
-                                    Temoji[0]
-                                  }\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
+                            <b>${ContractName} Buy</b>\n${Temoji[0].repeat(
+                                    stepEVal
+                                  )}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
                                     sent[0].symbol
-                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote
-                                    .toFixed(2)
-                                    .toLocaleString("fullwide", {
-                                      useGrouping: false,
-                                    })} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
+                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
+                                    undefined,
+                                    {
+                                      maximumFractionDigits: 2,
+                                    }
+                                  )} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
                                     2
                                   )}% ⬆\n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                                     12

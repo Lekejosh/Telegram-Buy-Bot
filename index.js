@@ -87,7 +87,7 @@ bot.command(["addtoken", "buildsettings"], async (ctx, next) => {
           chatId: ctx.chat.id,
           step: "100",
           cSupply: "100000000000000000",
-          emoji: "Not Set",
+          emoji: "💎",
           mEnable: false,
           mImage: "Not Set",
           timeStamp: "0000000",
