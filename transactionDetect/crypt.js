@@ -182,7 +182,7 @@ class transaction {
                                   .toFixed(2)
                                   .toLocaleString("fullwide", {
                                     useGrouping: false,
-                                  })} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b>: 1\n<b>Price</b>:$${priceNum.toFixed(
+                                  })} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b> 1\n<b>Price</b>:$${priceNum.toFixed(
                                   12
                                 )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: Not A Whale\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${lastpair}"><b>Chart</b></a> |  <a href="${lastTele}"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
                               );
@@ -195,7 +195,7 @@ class transaction {
                                   .toFixed(2)
                                   .toLocaleString("fullwide", {
                                     useGrouping: false,
-                                  })} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b>: 1\n<b>Price</b>:$${priceNum.toFixed(
+                                  })} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b> 1\n<b>Price</b>:$${priceNum.toFixed(
                                   12
                                 )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: ${machala} 🐋\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${lastpair}"><b>Chart</b></a> |  <a href="${lastTele}"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
                               );
@@ -213,7 +213,7 @@ class transaction {
                                     useGrouping: false,
                                   })} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
                                   2
-                                )}% ⬆ \n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
+                                )}% ⬆ \n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                                   12
                                 )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: Not A Whale\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${lastpair}"><b>Chart</b></a> |  <a href="${lastTele}"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
                               );
@@ -228,7 +228,7 @@ class transaction {
                                     useGrouping: false,
                                   })} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
                                   2
-                                )}% ⬆ \n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
+                                )}% ⬆ \n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                                   12
                                 )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: ${machala} 🐋\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${lastpair}"><b>Chart</b></a> |  <a href="${lastTele}"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
                               );
@@ -246,7 +246,7 @@ class transaction {
                                     useGrouping: false,
                                   })} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
                                   2
-                                )}% ⬆\n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
+                                )}% ⬆\n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                                   12
                                 )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: Not A Whale\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${lastpair}"><b>Chart</b></a> |  <a href="${lastTele}"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
                               );
@@ -261,7 +261,7 @@ class transaction {
                                     useGrouping: false,
                                   })} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
                                   2
-                                )}% ⬆\n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
+                                )}% ⬆\n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                                   12
                                 )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: ${machala} 🐋\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${lastpair}"><b>Chart</b></a> |  <a href="${lastTele}"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
                               );
@@ -408,18 +408,18 @@ class transaction {
                           console.log("error saving");
                         } else {
                           console.log("Na the name be this=>", `{Tname[0]}`);
-
                           let value1 = Number(sent[0].value);
                           let value2 = Number(sent[1].value);
                           let sum = value1 / 10 ** 18 + value2 / 10 ** 18;
                           let sumation = Number(sum);
-                          let realSum = sum.toLocaleString("fullwide");
-                          let spentUsd = (sum * price).toLocaleString(
-                            "fullwide",
-                            {
+                          let realSum = sumation
+                            .toFixed(2)
+                            .toLocaleString("fullwide");
+                          let spentUsd = (sumation * price)
+                            .toFixed(2)
+                            .toLocaleString("fullwide", {
                               useGrouping: false,
-                            }
-                          );
+                            });
                           let buyerBalCon = Number(buyerBal) / 10 ** 18;
 
                           let walletVal = balance / 10 ** 18;
@@ -427,13 +427,11 @@ class transaction {
                           let spentEth = (spentUsd / ethValue).toFixed(5);
                           let mcap = price * total_supply;
 
-                          let mcapSum = Number(mcap).toLocaleString("fullwide");
+                          let mcapSum = Number(mcap)
+                            .toFixed(2)
+                            .toLocaleString("fullwide");
                           let mcapfin = mcapSum;
                           console.log("Working Now...");
-                          // User.find((error, data) => {
-                          //   if (error) {
-                          //     console.log(error);
-                          //   } else {
                           let buyerPOS = (sumation / buyerBalCon) * 100;
                           console.log(sumation);
                           console.log(buyerBalCon);
@@ -455,12 +453,11 @@ class transaction {
                                     Temoji[0]
                                   }\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
                                     sent[0].symbol
-                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
-                                    "fullwide",
-                                    {
+                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote
+                                    .toFixed(2)
+                                    .toLocaleString("fullwide", {
                                       useGrouping: false,
-                                    }
-                                  )} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b>: 1\n<b>Price</b>:$${priceNum.toFixed(
+                                    })} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b> 1\n<b>Price</b>:$${priceNum.toFixed(
                                     12
                                   )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: Not A Whale\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${
                                     pair[0]
@@ -475,12 +472,11 @@ class transaction {
                                     Temoji[0]
                                   }\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
                                     sent[0].symbol
-                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
-                                    "fullwide",
-                                    {
+                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote
+                                    .toFixed(2)
+                                    .toLocaleString("fullwide", {
                                       useGrouping: false,
-                                    }
-                                  )} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b>: 1\n<b>Price</b>:$${priceNum.toFixed(
+                                    })} USD) \n<b>Buyer Position</b>: NEW!!!\n<b>Buy # </b> 1\n<b>Price</b>:$${priceNum.toFixed(
                                     12
                                   )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: ${machala} 🐋\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${
                                     pair[0]
@@ -498,14 +494,13 @@ class transaction {
                                     Temoji[0]
                                   }\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH)\n<b>Got</b>: ${realSum} ${
                                     sent[0].symbol
-                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
-                                    "fullwide",
-                                    {
+                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote
+                                    .toFixed(2)
+                                    .toLocaleString("fullwide", {
                                       useGrouping: false,
-                                    }
-                                  )} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
+                                    })} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
                                     2
-                                  )}% ⬆ \n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
+                                  )}% ⬆ \n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                                     12
                                   )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: Not A Whale\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${
                                     pair[0]
@@ -520,14 +515,13 @@ class transaction {
                                     Temoji[0]
                                   }\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH)\n<b>Got</b>: ${realSum} ${
                                     sent[0].symbol
-                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
-                                    "fullwide",
-                                    {
+                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote
+                                    .toFixed(2)
+                                    .toLocaleString("fullwide", {
                                       useGrouping: false,
-                                    }
-                                  )} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
+                                    })} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
                                     2
-                                  )}% ⬆ \n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
+                                  )}% ⬆ \n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                                     12
                                   )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: ${machala} 🐋\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${
                                     pair[0]
@@ -545,14 +539,13 @@ class transaction {
                                     Temoji[0]
                                   }\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
                                     sent[0].symbol
-                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
-                                    "fullwide",
-                                    {
+                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote
+                                    .toFixed(2)
+                                    .toLocaleString("fullwide", {
                                       useGrouping: false,
-                                    }
-                                  )} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
+                                    })} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
                                     2
-                                  )}% ⬆\n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
+                                  )}% ⬆\n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                                     12
                                   )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: Not A Whale\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${
                                     pair[0]
@@ -567,14 +560,13 @@ class transaction {
                                     Temoji[0]
                                   }\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
                                     sent[0].symbol
-                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
-                                    "fullwide",
-                                    {
+                                  }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote
+                                    .toFixed(2)
+                                    .toLocaleString("fullwide", {
                                       useGrouping: false,
-                                    }
-                                  )} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
+                                    })} USD) \n<b>Buyer Position</b>: ${buyerPOS.toFixed(
                                     2
-                                  )}% ⬆\n<b>Buy # </b>:${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
+                                  )}% ⬆\n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
                                     12
                                   )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: ${machala} 🐋\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${
                                     pair[0]
