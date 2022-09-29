@@ -3,6 +3,7 @@ const User = require("../userModel");
 
 const axios = require("axios");
 const services = require("./balance");
+//Defining Const Arrays
 const ID = [];
 const image = [];
 const pair = [];
@@ -14,15 +15,10 @@ const Clock = [];
 const Thash = [];
 const stepp = [];
 class transaction {
-  // constructor() {
-  //   this.transaction = {};
-  //   this.transaction.unit = "";
-  // }
-
   //Get transaction details APIs
   async getTransaction(callback) {
     let user = await User.find();
-
+    // looping through the database
     for (let i = 0; i < user.length; i++) {
       ID.push(user[i].chatId);
       image.push(user[i].mImage);
@@ -37,6 +33,7 @@ class transaction {
     }
     try {
       let chatss = await User.find();
+      // Data Length == 1
       if (chatss.length == 1) {
         console.log(token[0]);
         let lastId = ID[ID.length - 1];
@@ -82,7 +79,7 @@ class transaction {
           const buyerTBalance = await axios.get(
             `https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${lastToken}&address=${vall.data.transactions[0].from}&tag=latest&apikey=112R9MIZ97GI3M7UBVNAR34HYIGEW4RK8W`
           );
-          
+
           await axios
             .all([
               res,
@@ -97,38 +94,27 @@ class transaction {
             ])
             .then(
               axios.spread(async (...responses) => {
-                // const { hash } = responses[0]?.data?.result[0] || {};
+                //getting results from the API
                 const { ContractName } = responses[1]?.data?.result[0] || {};
-
                 const { id, date, sent, received } =
                   responses[2].data.transactions[0] || {};
                 const ball = responses[3].data;
-
                 let ethBal = ball.find((o) => o.contract_name === "Ethereum");
-
                 let whaleee = ball.find((o) => o.quote >= 100);
-                console.log(whaleee);
                 let machala = whaleee?.contract_name || {};
-
                 const { balance, quote } = ethBal;
-
                 const { total_txs } = responses[4]?.data || {};
                 const { price } = responses[5]?.data;
                 let priceNum = Number(price);
-                // console.log(price);
-
                 const { total_supply } = responses[6].data;
-                // console.log(total_supply);
-
                 const ethValue = responses[7].data.data[0].quote.USD.price;
-
                 const buyerBal = responses[8].data.result;
                 console.log(date);
                 console.log("Clock=>", Clock[0]);
 
-                // Sending ALert details
-                // this.transaction.lastValue = user[i].timeStamp;
+                // Detectinf if a buy Transaction
                 if (sent.length === 2 && received.length === 1) {
+                  // Checking the database if last transation time stamp is the same
                   if (Clock[0] == date) {
                     return;
                   } else {
@@ -157,9 +143,7 @@ class transaction {
                             undefined,
                             { maximumFractionDigits: 2 }
                           );
-                          console.log(buyerBal)
                           let buyerBalCon = Number(buyerBal) / 10 ** 18;
-
                           let walletVal = balance / 10 ** 18;
                           let ethWalletVal = walletVal.toFixed(5);
                           let spentEth = (spentUsd / ethValue).toFixed(5);
@@ -277,9 +261,6 @@ class transaction {
                               );
                             }
                           }
-
-                          //   });
-                          // }
                         }
                       }
                     );
@@ -287,10 +268,6 @@ class transaction {
                 } else {
                   return;
                 }
-                // console.log("I dey here");
-                // console.log(user[i].chatId);
-
-                // this.transaction.unit = Time[0]
               })
             );
         }
@@ -363,7 +340,6 @@ class transaction {
                   responses[2].data.transactions[0] || {};
                 const ball = responses[3].data;
 
-
                 let ethBal = ball.find((o) => o.contract_name === "Ethereum");
 
                 let whaleee = ball.find((o) => o.quote >= 100);
@@ -375,23 +351,14 @@ class transaction {
                 const { total_txs } = responses[4]?.data || {};
                 const { price } = responses[5]?.data;
                 let priceNum = Number(price);
-                // console.log(price);
-
                 const { total_supply } = responses[6].data;
-                // console.log(total_supply);
 
                 const ethValue = responses[7].data.data[0].quote.USD.price;
 
                 const buyerBal = responses[8].data.result;
                 console.log(date);
 
-                // const toksPrices = responses[8].data.data;
-                // console.log("Balances=>",ball)
-                // console.log("toksPrices=>",toksPrices)
-
                 let lastTime = Clock[Clock.length - 1];
-                // Sending ALert details
-                // this.transaction.lastValue = user[i].timeStamp;
                 if (sent.length === 2 && received.length === 1) {
                   if (lastTime == date) {
                     return;
@@ -438,7 +405,6 @@ class transaction {
                           console.log(sumation);
                           console.log(buyerBalCon);
                           console.log(buyerPOS);
-                          // if (sum * price <= data[0].step) {
                           if (
                             mcapfin == NaN ||
                             spentUsd == NaN ||
@@ -586,8 +552,6 @@ class transaction {
                             }
                           }
 
-                          //   });
-                          // }
                         }
                       }
                     );
@@ -595,10 +559,6 @@ class transaction {
                 } else {
                   return;
                 }
-                // console.log("I dey here");
-                // console.log(user[i].chatId);
-
-                // this.transaction.unit = Time[0]
               })
             );
         }
@@ -608,5 +568,7 @@ class transaction {
     }
   }
 }
+
+// Exporting
 
 module.exports = { transaction, ID, image };

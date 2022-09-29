@@ -6,8 +6,6 @@ class Bot {
     this.transaction = new transaction();
   }
 
-  // Replace the "-1001573064067" with your chatId from your database
-
   // Send Alert message
 
   sendMessages(message) {
