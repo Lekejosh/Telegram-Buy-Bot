@@ -1,4 +1,4 @@
-const { Composer } = require("micro-bot");
+const Telegraf = require("telegraf");
 
 const mongoose = require("mongoose");
 const { session } = require("telegraf-session-mongoose");
@@ -7,14 +7,13 @@ const verifyToken = require("./ethvalidate");
 const User = require("./userModel");
 const Group = require("./groupModel");
 const Stage = require("telegraf/stage");
-const dotenv = require("dotenv");
-dotenv.config({ path: "configgg/config.env" });
+const dotenv = require('dotenv')
+dotenv.config({ path: "configgg/config.env" })
 // Transaction Robot
 const Robot = require("./transactionDetect/bot");
-// const {  Composer } = require("telegraf");
+const {  Composer } = require("telegraf");
 const WizardScene = require("telegraf/scenes/wizard");
-const bot = Composer;
-// (process.env.BOT);
+const bot = new Telegraf(process.env.BOT);
 // //Transaction RObot Instance
 const instance = new Robot(bot);
 const errorMiddleware = require("./error/error");
@@ -1019,30 +1018,29 @@ bot.action("tsave", (ctx) => {
 
 //DB connect and Bot launch
 
-// const init = async () => {
-mongoose
-  .connect(process.env.DB_URI)
-  .then((data) => {
-    console.log(`Mongodb connected with serve: ${data.connection.host}`);
-  })
-  .catch((err) => {
-    console.log(err);
+const init = async () => {
+  mongoose
+    .connect(process.env.DB_URI)
+    .then((data) => {
+      console.log(`Mongodb connected with serve: ${data.connection.host}`);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  bot.launch("uncaughtException", (err) => {
+    console.log(`Error: $err: ${err.message}`);
+    console.log(`Shutting down the server due to uncaught Expectation`);
+    bot.exit(1);
   });
-// bot.launch("uncaughtException", (err) => {
-//   console.log(`Error: $err: ${err.message}`);
-//   console.log(`Shutting down the server due to uncaught Expectation`);
-//   bot.exit(1);
-// });
-// exports.handler = (event,context,callback)=>{
-//   const tmp = JSON.parse(event.body);
-//   bot.handleUpdate(tmp)
-//   return callback(null,{
-//     statusCode:200,
-//     body: ''
-//   })
-// };
+  // exports.handler = (event,context,callback)=>{
+  //   const tmp = JSON.parse(event.body);
+  //   bot.handleUpdate(tmp)
+  //   return callback(null,{
+  //     statusCode:200,
+  //     body: ''
+  //   })
+  // }
+};
 
-module.exports = bot;
+init();
 
-// guarded temple
-// https://guarded-temple-20521.herokuapp.com/
