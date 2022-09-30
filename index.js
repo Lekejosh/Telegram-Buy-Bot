@@ -7,19 +7,16 @@ const verifyToken = require("./ethvalidate");
 const User = require("./userModel");
 const Group = require("./groupModel");
 const Stage = require("telegraf/stage");
+const dotenv = require('dotenv')
+dotenv.config({ path: "configgg/config.env" })
 // Transaction Robot
 const Robot = require("./transactionDetect/bot");
-const upload = require("./upload");
-const { Scenes, Composer } = require("telegraf");
+const {  Composer } = require("telegraf");
 const WizardScene = require("telegraf/scenes/wizard");
-const bot = new Telegraf("5561811963:AAFV83oL535KmiZOHwkSIybgiwmoCAxUCxQ");
-// 5561811963:AAFV83oL535KmiZOHwkSIybgiwmoCAxUCxQ
-// const imageScene = require("./scenes/imageScene.js").imageScene;
+const bot = new Telegraf(process.env.BOT);
 // //Transaction RObot Instance
 const instance = new Robot(bot);
 const errorMiddleware = require("./error/error");
-const ErrorMiddleware = require("./error/errorHandler");
-const catchAsyncErrors = require("./error/catchAsyncErrors");
 const mainId = [];
 const groupNameee = [];
 // Bot alert interval
@@ -62,7 +59,7 @@ bot.catch((err, ctx) => {
 bot.command(["addtoken", "buildsettings"], async (ctx, next) => {
   if (ctx.from._is_in_admin_list) {
     let admi = ctx.update.message.chat._admins;
-    groupNameee.push(ctx.chat.title);
+    groupNameee.unshift(ctx.chat.title);
     console.log(ctx.chat.id);
     console.log(admi);
     await User.findOne({ chatId: ctx.chat.id }).then((user) => {
@@ -94,7 +91,7 @@ bot.command(["addtoken", "buildsettings"], async (ctx, next) => {
           hash: "nill",
         }).then((neww) => {
           console.log(neww);
-          groupNameee.push(ctx.chat.title);
+          groupNameee.unshift(ctx.chat.title);
           Group.create({
             chatId: ctx.chat.id,
             groupName: ctx.chat.title,
@@ -117,7 +114,7 @@ bot.command(["addtoken", "buildsettings"], async (ctx, next) => {
           [
             {
               text: "Click Me",
-              url: `https://t.me/BuildGr33nBuyBot?start=${ctx.chat.id}`,
+              url: `http://t.me/lekelekebot?start=${ctx.chat.id}`,
             },
           ],
         ],
@@ -146,7 +143,7 @@ bot.hears(/\/start(.*)/, (msg, match) => {
   console.log(msg.update.update_id);
 
   let upd = msg.match.input.split(" ");
-  mainId.push(upd[1]);
+  mainId.unshift(upd[1]);
   let chatId = upd[1];
   Group.findOne(
     { chatId },
@@ -1023,7 +1020,7 @@ bot.action("tsave", (ctx) => {
 
 const init = async () => {
   mongoose
-    .connect("mongodb://localhost:27017/buybot")
+    .connect(process.env.DB_URI)
     .then((data) => {
       console.log(`Mongodb connected with serve: ${data.connection.host}`);
     })

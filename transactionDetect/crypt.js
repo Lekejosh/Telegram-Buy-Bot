@@ -14,6 +14,7 @@ const Tele = [];
 const Clock = [];
 const Thash = [];
 const stepp = [];
+const Csupply = [];
 class transaction {
   //Get transaction details APIs
   async getTransaction(callback) {
@@ -28,6 +29,7 @@ class transaction {
       Temoji.push(user[i].emoji);
       Tele.push(user[i].telegram);
       stepp.push(user[i].step);
+      Csupply.push(user[i].cSupply);
       Clock.unshift(user[i].timeStamp);
       Thash.unshift(user[i].hash);
     }
@@ -113,7 +115,7 @@ class transaction {
                 console.log("Clock=>", Clock[0]);
 
                 // Detectinf if a buy Transaction
-                if (sent.length === 2 && received.length === 1) {
+                if (received.length === 1) {
                   // Checking the database if last transation time stamp is the same
                   if (Clock[0] == date) {
                     return;
@@ -125,6 +127,7 @@ class transaction {
                       { chatId },
                       {
                         timeStamp: date,
+                        cSupply: total_supply,
                       },
                       (error, timeeee) => {
                         if (error) {
@@ -132,9 +135,17 @@ class transaction {
                         } else {
                           console.log("Na the name be this=>", `${lastTname}`);
 
-                          let value1 = Number(sent[0].value);
-                          let value2 = Number(sent[1].value);
-                          let sum = value1 / 10 ** 18 + value2 / 10 ** 18;
+                          let value1 = Number(sent[0]?.value);
+                          let value2 = Number(sent[1]?.value);
+                          let value3 = Number(sent[2]?.value || 0);
+                          let value4 = Number(sent[3]?.value || 0);
+                          let value5 = Number(sent[4]?.value || 0);
+                          let sum =
+                            value1 / 10 ** sent[0]?.decimals +
+                            value2 / 10 ** sent[0]?.decimals +
+                            value3 / 10 ** sent[0]?.decimals +
+                            value4 / 10 ** sent[0]?.decimals +
+                            value5 / 10 ** sent[0]?.decimals;
                           let sumation = Number(sum);
                           let realSum = sumation.toLocaleString(undefined, {
                             minimumFractionDigits: 2,
@@ -143,8 +154,9 @@ class transaction {
                             undefined,
                             { maximumFractionDigits: 2 }
                           );
-                          let buyerBalCon = Number(buyerBal) / 10 ** 18;
-                          let walletVal = balance / 10 ** 18;
+                          let buyerBalCon =
+                            Number(buyerBal) / 10 ** sent[0]?.decimals;
+                          let walletVal = balance / 10 ** sent[0]?.decimals;
                           let ethWalletVal = walletVal.toFixed(5);
                           let spentEth = (spentUsd / ethValue).toFixed(5);
                           let mcap = price * total_supply;
@@ -278,6 +290,7 @@ class transaction {
         await pair.shift();
         await Tname.shift();
         await Temoji.shift();
+        await Csupply.shift();
         await Tele.shift();
         await Clock.pop();
         await Thash.pop();
@@ -285,6 +298,7 @@ class transaction {
         console.log("The ID Array=>", ID);
         console.log(token[0]);
         console.log("toksss=>", token);
+        console.log("dateee=>", Clock);
         if (token[0] == undefined || pair[0] == undefined) {
           return console.log("Underfined");
         } else {
@@ -370,15 +384,27 @@ class transaction {
                       { chatId },
                       {
                         timeStamp: date,
+                        cSupply: total_supply,
                       },
                       (error, timeeee) => {
                         if (error) {
                           console.log("error saving");
                         } else {
-                          console.log("Na the name be this=>", `{Tname[0]}`);
-                          let value1 = Number(sent[0].value);
-                          let value2 = Number(sent[1].value);
-                          let sum = value1 / 10 ** 18 + value2 / 10 ** 18;
+                          console.log(
+                            "Na the name be this=>",
+                            `{ContractName}`
+                          );
+                          let value1 = Number(sent[0]?.value);
+                          let value2 = Number(sent[1]?.value);
+                          let value3 = Number(sent[2]?.value || 0);
+                          let value4 = Number(sent[3]?.value || 0);
+                          let value5 = Number(sent[4]?.value || 0);
+                          let sum =
+                            value1 / 10 ** sent[0]?.decimals +
+                            value2 / 10 ** sent[0]?.decimals +
+                            value3 / 10 ** sent[0]?.decimals +
+                            value4 / 10 ** sent[0]?.decimals +
+                            value5 / 10 ** sent[0]?.decimals;
                           let sumation = Number(sum);
                           let realSum = sumation.toLocaleString(undefined, {
                             minimumFractionDigits: 2,
@@ -387,9 +413,10 @@ class transaction {
                             undefined,
                             { maximumFractionDigits: 2 }
                           );
-                          let buyerBalCon = Number(buyerBal) / 10 ** 18;
+                          let buyerBalCon =
+                            Number(buyerBal) / 10 ** sent[0]?.decimals;
 
-                          let walletVal = balance / 10 ** 18;
+                          let walletVal = balance / 10 ** sent[0]?.decimals;
                           let ethWalletVal = walletVal.toFixed(5);
                           let spentEth = (spentUsd / ethValue).toFixed(5);
                           let mcap = price * total_supply;
@@ -417,7 +444,7 @@ class transaction {
                               if (whaleee == undefined) {
                                 callback(
                                   ` 
-                            <b>${Tname[0]} Buy</b>\n${Temoji[0].repeat(
+                            <b>${ContractName} Buy</b>\n${Temoji[0].repeat(
                                     stepEVal
                                   )}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
                                     sent[0].symbol
@@ -437,7 +464,7 @@ class transaction {
                               } else {
                                 callback(
                                   ` 
-                            <b>${Tname[0]} Buy</b>\n${Temoji[0].repeat(
+                            <b>${ContractName} Buy</b>\n${Temoji[0].repeat(
                                     stepEVal
                                   )}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
                                     sent[0].symbol
@@ -551,7 +578,6 @@ class transaction {
                               }
                             }
                           }
-
                         }
                       }
                     );
