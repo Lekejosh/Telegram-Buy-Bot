@@ -1,8 +1,8 @@
 "use strict";
 const User = require("../userModel");
-
+const dotenv = require("dotenv");
+dotenv.config({ path: "../configgg/config.env" });
 const axios = require("axios");
-const services = require("./balance");
 //Defining Const Arrays
 const ID = [];
 const image = [];
@@ -50,36 +50,38 @@ class transaction {
           return console.log("Underfined");
         } else {
           const res = await axios.get(
-            `https://api.unmarshal.com/v3/ethereum/address/${lastToken}/transactions?page=1&pageSize=5&contract=string&price=true&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
+            `https://api.unmarshal.com/v3/ethereum/address/${lastToken}/transactions?page=1&pageSize=5&contract=string&price=true&auth_key=${process.env.UNMARSHAL}`
           );
           const con = await axios.get(
-            `https://api.etherscan.io/api?module=contract&action=getsourcecode&apikey=112R9MIZ97GI3M7UBVNAR34HYIGEW4RK8W&address=${lastToken}`
+            `https://api.etherscan.io/api?module=contract&action=getsourcecode&apikey=${process.env.ETHERSCAN}&address=${lastToken}`
           );
 
           const vall = await axios.get(
-            `https://api.unmarshal.com/v2/ethereum/address/${lastpair}/transactions?page=1&pageSize=10&contract=string&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
+            `https://api.unmarshal.com/v2/ethereum/address/${lastpair}/transactions?page=1&pageSize=10&contract=string&auth_key=${process.env.UNMARSHAL}`
           );
           const val = await axios.get(
-            `https://api.unmarshal.com/v1/ethereum/address/${vall.data.transactions[0].from}/assets?verified=true&chainId=false&token=false&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
+            `https://api.unmarshal.com/v1/ethereum/address/${vall.data.transactions[0].from}/assets?verified=true&chainId=false&token=false&auth_key=${process.env.UNMARSHAL}`
           );
 
           const coun = await axios.get(
-            `https://api.unmarshal.com/v2/ethereum/address/${vall.data.transactions[0].from}/transactions?page=1&pageSize=5&contract=${lastToken}&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
+            `https://api.unmarshal.com/v2/ethereum/address/${vall.data.transactions[0].from}/transactions?page=1&pageSize=5&contract=${lastToken}&auth_key=${process.env.UNMARSHAL}`
           );
           const priceS = await axios.get(
-            `https://api.unmarshal.com/v1/pricestore/chain/ethereum/${lastToken}?timestamp=${vall.data.transactions[0].date}&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
+            `https://api.unmarshal.com/v1/pricestore/chain/ethereum/${lastToken}?timestamp=${vall.data.transactions[0].date}&auth_key=${process.env.UNMARSHAL}`
           );
-          const supplyS = await axios.get(services.supply);
+          const supplyS = await axios.get(
+            `https://api.unmarshal.com/v1/tokenstore/token/address/${lastToken}?auth_key=${process.env.UNMARSHAL}`
+          );
           const conversion = await axios.get(
             "https://pro-api.coinmarketcap.com/v2/tools/price-conversion?amount=1&symbol=ETH",
             {
               headers: {
-                "X-CMC_PRO_API_KEY": "98faa061-7512-412a-a012-9866c329b3c4",
+                "X-CMC_PRO_API_KEY": process.env.COINMARKET_CAP,
               },
             }
           );
           const buyerTBalance = await axios.get(
-            `https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${lastToken}&address=${vall.data.transactions[0].from}&tag=latest&apikey=112R9MIZ97GI3M7UBVNAR34HYIGEW4RK8W`
+            `https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${lastToken}&address=${vall.data.transactions[0].from}&tag=latest&apikey=${process.env.ETHERSCAN}`
           );
 
           await axios
@@ -303,37 +305,39 @@ class transaction {
           return console.log("Underfined");
         } else {
           const res = await axios.get(
-            `https://api.unmarshal.com/v3/ethereum/address/${token[0]}/transactions?page=1&pageSize=5&contract=string&price=true&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
+            `https://api.unmarshal.com/v3/ethereum/address/${token[0]}/transactions?page=1&pageSize=5&contract=string&price=true&auth_key=${process.env.UNMARSHAL}`
           );
           const con = await axios.get(
-            `https://api.etherscan.io/api?module=contract&action=getsourcecode&apikey=112R9MIZ97GI3M7UBVNAR34HYIGEW4RK8W&address=${token[0]}`
+            `https://api.etherscan.io/api?module=contract&action=getsourcecode&apikey=${process.env.ETHERSCAN}&address=${token[0]}`
           );
 
           const vall = await axios.get(
-            `https://api.unmarshal.com/v2/ethereum/address/${pair[0]}/transactions?page=1&pageSize=10&contract=string&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
+            `https://api.unmarshal.com/v2/ethereum/address/${pair[0]}/transactions?page=1&pageSize=10&contract=string&auth_key=${process.env.UNMARSHAL}`
           );
           const val = await axios.get(
-            `https://api.unmarshal.com/v1/ethereum/address/${vall.data.transactions[0].from}/assets?verified=true&chainId=false&token=false&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
+            `https://api.unmarshal.com/v1/ethereum/address/${vall.data.transactions[0].from}/assets?verified=true&chainId=false&token=false&auth_key=${process.env.UNMARSHAL}`
           );
 
           const coun = await axios.get(
-            `https://api.unmarshal.com/v2/ethereum/address/${vall.data.transactions[0].from}/transactions?page=1&pageSize=5&contract=${token[0]}&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
+            `https://api.unmarshal.com/v2/ethereum/address/${vall.data.transactions[0].from}/transactions?page=1&pageSize=5&contract=${token[0]}&auth_key=${process.env.UNMARSHAL}`
           );
           const priceS = await axios.get(
-            `https://api.unmarshal.com/v1/pricestore/chain/ethereum/${token[0]}?timestamp=${vall.data.transactions[0].date}&auth_key=GjCHF9OICe6PBJJ9jQSnA84DOU67VcMs1hcT0K68`
+            `https://api.unmarshal.com/v1/pricestore/chain/ethereum/${token[0]}?timestamp=${vall.data.transactions[0].date}&auth_key=${process.env.UNMARSHAL}`
           );
           const conversion = await axios.get(
             "https://pro-api.coinmarketcap.com/v2/tools/price-conversion?amount=1&symbol=ETH",
             {
               headers: {
-                "X-CMC_PRO_API_KEY": "98faa061-7512-412a-a012-9866c329b3c4",
+                "X-CMC_PRO_API_KEY": process.env.COINMARKET_CAP,
               },
             }
           );
           const buyerTBalance = await axios.get(
-            `https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${token[0]}&address=${vall.data.transactions[0].from}&tag=latest&apikey=112R9MIZ97GI3M7UBVNAR34HYIGEW4RK8W`
+            `https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${token[0]}&address=${vall.data.transactions[0].from}&tag=latest&apikey=${process.env.ETHERSCAN}`
           );
-          const supplyS = await axios.get(services.supply);
+          const supplyS = await axios.get(
+            `https://api.unmarshal.com/v1/tokenstore/token/address/${token[0]}?auth_key=${process.env.UNMARSHAL}`
+          );
           await axios
             .all([
               res,

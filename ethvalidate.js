@@ -1,5 +1,4 @@
 // Apii to Validate Token Appress
-
 const axios = require("axios");
 module.exports = {
   validateToken: (tokenAddress) =>
