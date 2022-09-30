@@ -2,8 +2,8 @@
   "name": "buy-bot",
   "version": "1.0.0",
   "description": "",
-  "main": "micro-bot",
-  "start": "micro-bot",
+  "main": "index.js",
+  "start": "index.js",
   "scripts": {
     "start": "micro-bot",
     "test": "echo \"Error: no test specified\" && exit 1"
