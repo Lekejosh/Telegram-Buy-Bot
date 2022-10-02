@@ -20,14 +20,14 @@ const errorMiddleware = require("./error/error");
 const mainId = [];
 const groupNameee = [];
 // Bot alert interval
-setInterval(async () => {
-  try {
-    instance.watchChanges();
-  } catch (error) {
-    console.error(error);
-    return;
-  }
-}, 15000);
+// setInterval(async () => {
+//   try {
+//     instance.watchChanges();
+//   } catch (error) {
+//     console.error(error);
+//     return;
+//   }
+// }, 15000);
 
 // Session start
 
@@ -114,7 +114,7 @@ bot.command(["addtoken", "buildsettings"], async (ctx, next) => {
           [
             {
               text: "Click Me",
-              url: `https://t.me/BuildGr33nBuyBot?start=${ctx.chat.id}`,
+              url: `http://t.me/lekelekebot?start=${ctx.chat.id}`,
             },
           ],
         ],

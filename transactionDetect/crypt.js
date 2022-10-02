@@ -377,7 +377,7 @@ class transaction {
                 console.log(date);
 
                 let lastTime = Clock[Clock.length - 1];
-                if (sent.length === 2 && received.length === 1) {
+                if (received.length === 1) {
                   if (lastTime == date) {
                     return;
                   } else {
