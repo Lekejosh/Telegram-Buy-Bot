@@ -20,14 +20,14 @@ const errorMiddleware = require("./error/error");
 const mainId = [];
 const groupNameee = [];
 // Bot alert interval
-// setInterval(async () => {
-//   try {
-//     instance.watchChanges();
-//   } catch (error) {
-//     console.error(error);
-//     return;
-//   }
-// }, 15000);
+setInterval(async () => {
+  try {
+    instance.watchChanges();
+  } catch (error) {
+    console.error(error);
+    return;
+  }
+}, 15000);
 
 // Session start
 
