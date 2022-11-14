@@ -8,7 +8,7 @@ const User = require("./userModel");
 const Group = require("./groupModel");
 const Stage = require("telegraf/stage");
 const dotenv = require('dotenv')
-dotenv.config({ path: "configgg/config.env" })
+dotenv.config({ path: "config/config.env" })
 // Transaction Robot
 const Robot = require("./transactionDetect/bot");
 const {  Composer } = require("telegraf");

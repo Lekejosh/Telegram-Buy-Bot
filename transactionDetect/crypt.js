@@ -188,19 +188,19 @@ class transaction {
                           } else {
                             var whaleStats = machala + " " + "🐋";
                           }
-                         callback(
-                           `
+                          callback(
+                            `
                             <b>${ContractName} Buy</b>\n${lastTemoji.repeat(
-                             stepEVal
-                           )}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
-                             sent[0].symbol
-                           }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
-                             undefined,
-                             { maximumFractionDigits: 2 }
-                           )} USD) \n<b>Buyer Position</b>: ${position}\n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
-                             12
-                           )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>:${whaleStats}\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${lastpair}"><b>Chart</b></a> |  <a href="${lastTele}"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
-                         );
+                              stepEVal
+                            )}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
+                              sent[0].symbol
+                            }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
+                              undefined,
+                              { maximumFractionDigits: 2 }
+                            )} USD) \n<b>Buyer Position</b>: ${position}\n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
+                              12
+                            )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>:${whaleStats}\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${lastpair}"><b>Chart</b></a> |  <a href="${lastTele}"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
+                          );
                         }
                       }
                     );
@@ -320,10 +320,7 @@ class transaction {
                         if (error) {
                           console.log("error saving");
                         } else {
-                          console.log(
-                            "Na the name be this=>",
-                            `{ContractName}`
-                          );
+                          console.log("Na the name be this=>", ContractName);
                           let value1 = Number(sent[0]?.value);
                           let value2 = Number(sent[1]?.value);
                           let value3 = Number(sent[2]?.value || 0);
@@ -370,33 +367,39 @@ class transaction {
                           ) {
                             return;
                           } else {
-                           if (buyerPOS == 100 || buyerPOS == Infinity) {
-                             var position = "new";
-                           } else if (buyerPOS > 50) {
-                             var position =
-                               buyerPOS.toFixed(2) + "%" + " " + "⬆";
-                           } else {
-                             var position =
-                               buyerPOS.toFixed(2) + "%" + " " + "⬆";
-                           }
-                           if (whaleee == undefined) {
-                             var whaleStats = "Not a Whale";
-                           } else {
-                             var whaleStats = machala + " " + "🐋";
-                           }
-                           callback(
-                             `
-                            <b>${ContractName} Buy</b>\n${lastTemoji.repeat(
-                               stepEVal
-                             )}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
-                               sent[0].symbol
-                             }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
-                               undefined,
-                               { maximumFractionDigits: 2 }
-                             )} USD) \n<b>Buyer Position</b>: ${position}\n<b>Buy # </b>${total_txs}\n<b>Price</b>:$${priceNum.toFixed(
-                               12
-                             )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>:${whaleStats}\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${lastpair}"><b>Chart</b></a> |  <a href="${lastTele}"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
-                           );
+                            if (buyerPOS == 100 || buyerPOS == Infinity) {
+                              var position = "new";
+                            } else if (buyerPOS > 50) {
+                              var position =
+                                buyerPOS.toFixed(2) + "%" + " " + "⬆";
+                            } else {
+                              var position =
+                                buyerPOS.toFixed(2) + "%" + " " + "⬆";
+                            }
+                            if (whaleee == undefined) {
+                              var whaleStats = "Not a Whale";
+                            } else {
+                              var whaleStats = machala + " " + "🐋";
+                            }
+                            callback(
+                              ` 
+                            <b>${ContractName} Buy</b>\n${Temoji[0].repeat(
+                                stepEVal
+                              )}\n<b>Spent</b>: ${spentUsd} USD (${spentEth} ETH) \n<b>Got</b>: ${realSum} ${
+                                sent[0].symbol
+                              }\n<b>Buyer's Wallet ETH Value</b>: ${ethWalletVal} (${quote.toLocaleString(
+                                undefined,
+                                {
+                                  maximumFractionDigits: 2,
+                                }
+                              )} USD) \n<b>Buyer Position</b>: ${position} \n<b>Buy # </b> 1\n<b>Price</b>:$${priceNum.toFixed(
+                                12
+                              )} \n<b>MCap</b>: $ ${mcapfin}\n<b>Whale Status</b>: ${whaleStats}\n<b>Token Rank</b>: Coming Soon\n<a href="https://etherscan.io/tx/${id}"><b>TX</b></a> |  <a href="https://dextools.io/app/ether/pair-explorer/${
+                                pair[0]
+                              }"><b>Chart</b></a> |  <a href="${
+                                Tele[0]
+                              }"><b>Telegram</b></a> |  <a href="https://app.uniswap.org/#/swap?&chain=mainnet&use=v2&outputCurrency=0x410e7696dF8Be2a123dF2cf88808c6ddAb2ae2BF"><b>Uniswap</b></a>`
+                            );
                           }
                         }
                       }
